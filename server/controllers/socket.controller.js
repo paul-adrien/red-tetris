@@ -27,6 +27,8 @@ exports.socketController = (io) => {
         });
 
         socket.on('create piece', async (data) => {
+            if (data && !data.id)
+                data.id = socket.id;
             pieceController.checkPieceId(data.pieceId).then(
                 (res1) => {
                     pieceController.checkPlayerId(data.playerName).then(
@@ -53,6 +55,8 @@ exports.socketController = (io) => {
         });
 
         socket.on('join piece', async (data) => {
+            if (data && !data.id)
+                data.id = socket.id;
             pieceController.checkPlayerId(data.playerName).then(
                 (res1) => {
                     if (res1 === true) {
@@ -114,6 +118,11 @@ exports.socketController = (io) => {
         socket.on('malus', async (data) => {
             console.log('malus')
             io.emit('res malus', data);
+        });
+
+        socket.on('change mode', async (data) => {
+            console.log('change mode')
+            io.emit('res change mode', data);
         });
 
 

@@ -12,12 +12,12 @@ const routes: Routes = [
     pathMatch: "full",
   },
   {
-    path: ":piece/:playerName",
+    path: ":piece[:playerName]/piece",
     component: PieceComponent,
     pathMatch: "full",
   },
   {
-    path: `${hashKey}:piece[:playerName]`,
+    path: `:piece[:playerName]`,
     component: TransiComponent,
     pathMatch: "full",
   },

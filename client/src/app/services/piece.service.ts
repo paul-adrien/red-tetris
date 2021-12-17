@@ -26,6 +26,7 @@ export class pieceService implements OnDestroy {
   public malus = 0;
   public lock = false;
   public score = 0;
+  public mode = 0;
 
   public end = "";
 
@@ -109,7 +110,7 @@ export class pieceService implements OnDestroy {
 
     this.socketService.listenToServer("res player lose").subscribe((data) => {
       if (data && data.piece && data.piece.id === this.pieceName) {
-        console.log("player lose");
+        console.log("player lose", data);
         if (data.piece.start === true) {
           //un joueur a perdu
         } else {
@@ -130,10 +131,16 @@ export class pieceService implements OnDestroy {
       )
         this.malus += data.nbMalus - 1;
     });
+
+    this.socketService.listenToServer("res change mode").subscribe((data) => {
+      console.log(data);
+      if (data.pieceId === this.pieceName) this.mode = data.mode;
+    });
   }
 
   ngOnDestroy() {
     //window.clearInterval(this.timer)
+    this.leavePiece();
   }
 
   startGame() {
@@ -161,9 +168,11 @@ export class pieceService implements OnDestroy {
     event.stopPropagation();
   };
 
-  lineMalus(spectrum) {
-    spectrum.splice(0, 1);
-    spectrum.push([404, 404, 404, 404, 404, 404, 404, 404, 404, 404]);
+  async lineMalus() {
+    this.player.game.spectrum.splice(0, 1);
+    this.player.game.spectrum.push([
+      404, 404, 404, 404, 404, 404, 404, 404, 404, 404,
+    ]);
     this.malus--;
   }
 
@@ -372,6 +381,14 @@ export class pieceService implements OnDestroy {
     this.socketService.emitToServer("send spectrum", {
       pieceId: this.pieceName,
       player: this.player,
+      id: this.socketService.socket.id,
+    });
+  }
+
+  changeGameMode(mode: number) {
+    this.socketService.emitToServer("change mode", {
+      pieceId: this.pieceName,
+      mode: mode,
       id: this.socketService.socket.id,
     });
   }

@@ -26,6 +26,7 @@ exports.pieceList = async () => {
 
 exports.createPiece = async (piece) => {
     return new Promise((res, rej) => {
+        console.log(piece)
         if (!piece || !piece.pieceId || !piece.playerName || !piece.id)
             rej({ error: 'Wrong piece format' });
         else {

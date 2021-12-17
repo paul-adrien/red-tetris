@@ -8,6 +8,7 @@ class Piece {
     start = false;
     pause = false;
     tetroList = [];
+    mode = 0;
     constructor(pieceId) {
         this.id = pieceId;
     }

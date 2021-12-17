@@ -163,6 +163,7 @@ export class PieceComponent implements OnInit, OnDestroy {
       this.cd.detectChanges();
       this.pieceService.lock = true;
       if (this.pieceService?.start === true) {
+        console.log("test");
         if (this.pieceService.newTetro === true) {
           this.pieceService.DrawNewTetro(
             this.pieceService.player.game.spectrum,
@@ -181,8 +182,7 @@ export class PieceComponent implements OnInit, OnDestroy {
             this.pieceService.player.game.spectrum,
             this.pieceService.tetroList[this.pieceService.currentTetro]
           );
-          if (this.pieceService.malus > 0)
-            this.pieceService.lineMalus(this.pieceService.player.game.spectrum);
+          if (this.pieceService.malus > 0) this.pieceService.lineMalus();
           if (
             this.pieceService.checkNewPlace(
               this.pieceService.player.game.spectrum,

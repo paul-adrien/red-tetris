@@ -6,6 +6,7 @@ import {
   OnInit,
 } from "@angular/core";
 import { Router } from "@angular/router";
+import { hashKey } from "../customUrlSerializer";
 import { pieceService } from "../services/piece.service";
 import { WebsocketService } from "../services/websocketService";
 
@@ -56,36 +57,11 @@ import { WebsocketService } from "../services/websocketService";
 
     <button (click)="getPieceList()">Voir les rooms existantes</button>
   `,
-  styleUrls: ["./home.component.scss"],
+  styleUrls: ["./home.component.css"],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomeComponent implements OnInit, OnChanges {
-  pieceList = [
-    {
-      id: 0,
-    },
-    {
-      id: 2,
-    },
-    {
-      id: 3,
-    },
-    {
-      id: 4,
-    },
-    {
-      id: 5,
-    },
-    {
-      id: 6,
-    },
-    {
-      id: 7,
-    },
-    {
-      id: 8,
-    },
-  ];
+  public pieceList = [];
 
   constructor(
     private cd: ChangeDetectorRef,
@@ -110,10 +86,14 @@ export class HomeComponent implements OnInit, OnChanges {
       });
 
     this.socketService.listenToServer("res create piece").subscribe((data) => {
-      this.router.navigate([`${data.piece.id}/${data.player.name}`]);
+      this.router.navigate([
+        `${hashKey}${data.piece.id}[${data.player.name}]/piece`,
+      ]);
     });
     this.socketService.listenToServer("res join piece").subscribe((data) => {
-      this.router.navigate([`${data.piece.id}/${data.player.name}`]);
+      this.router.navigate([
+        `${hashKey}${data.piece.id}[${data.player.name}]/piece`,
+      ]);
     });
     this.socketService.listenToServer("res piece list").subscribe((data) => {
       this.cd.detectChanges();
