@@ -7,7 +7,6 @@ import { AppComponent } from "./app.component";
 import { HomeComponent } from "./home/home.component";
 import { WebsocketService } from "./services/websocketService";
 import { PieceComponent } from "./piece/piece.component";
-import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
 import { HeaderComponent } from "./header/header.component";
 import { TransiComponent } from "./transi/transi.component";
 import { UrlSerializer } from "@angular/router";
@@ -21,13 +20,7 @@ import { CustomUrlSerializer } from "./customUrlSerializer";
     HeaderComponent,
     TransiComponent,
   ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    ReactiveFormsModule,
-    FormsModule,
-    NgbModule,
-  ],
+  imports: [BrowserModule, AppRoutingModule, ReactiveFormsModule, FormsModule],
   providers: [
     WebsocketService,
     { provide: UrlSerializer, useClass: CustomUrlSerializer },

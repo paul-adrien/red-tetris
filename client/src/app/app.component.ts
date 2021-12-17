@@ -1,13 +1,13 @@
-import { Component } from '@angular/core';
-import { WebsocketService } from './services/websocketService';
+import { Component } from "@angular/core";
+import { WebsocketService } from "./services/websocketService";
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  selector: "app-root",
+  templateUrl: "./app.component.html",
+  styleUrls: ["./app.component.scss"],
 })
 export class AppComponent {
-  title = 'red-tetris';
+  title = "red-tetris";
 
   constructor(private socketService: WebsocketService) {
     this.socketService.setupSocketConnection();
