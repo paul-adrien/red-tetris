@@ -1,37 +1,44 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
-import { HomeComponent } from './home/home.component';
-import { PieceComponent } from './piece/piece.component';
-import { deactivateService } from './services/Deactivate.service';
+import { NgModule } from "@angular/core";
+import { RouterModule, Routes } from "@angular/router";
+import { hashKey } from "./customUrlSerializer";
+import { HomeComponent } from "./home/home.component";
+import { PieceComponent } from "./piece/piece.component";
+import { TransiComponent } from "./transi/transi.component";
 
 const routes: Routes = [
   {
-    path: 'home',
+    path: "home",
     component: HomeComponent,
-    pathMatch: 'full'
+    pathMatch: "full",
   },
   {
-    path: ':piece/:playerName',
+    path: ":piece/:playerName",
     component: PieceComponent,
-    pathMatch: 'full',
-    canDeactivate: [deactivateService]
+    pathMatch: "full",
   },
   {
-    path: '**',
-    component: HomeComponent,
-    pathMatch: 'full'
+    path: `${hashKey}:piece[:playerName]`,
+    component: TransiComponent,
+    pathMatch: "full",
   },
   {
-    path: '',
+    path: "**",
     component: HomeComponent,
-    pathMatch: 'full'
-  }
+    pathMatch: "full",
+  },
+  {
+    path: "",
+    component: HomeComponent,
+    pathMatch: "full",
+  },
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes, {
-    onSameUrlNavigation: 'ignore'
-  })],
-  exports: [RouterModule]
+  imports: [
+    RouterModule.forRoot(routes, {
+      onSameUrlNavigation: "ignore",
+    }),
+  ],
+  exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

@@ -30,11 +30,13 @@ exports.createPiece = async (piece) => {
             rej({ error: 'Wrong piece format' });
         else {
             const pieceIndex = pieceList.map((p) => { return p.id }).indexOf(piece.pieceId)
-            if (pieceIndex != -1) {
+            if (pieceIndex != -1 && pieceList[pieceIndex].start == true) {
+                rej({ success: 'This piece is start, wait the end', piece: pieceList[pieceIndex] })
+            } else if (pieceIndex != -1) {
                 pieceList[pieceIndex].playersId.push(piece.playerName);
                 if (pieceList[pieceIndex].creator === '')
                     pieceList[pieceIndex].creator = piece.playerName;
-                if ((playerIndex = playerList.map((p) => { return p.name }).indexOf(piece.playerName)) == -1) {
+                if ((playerIndex = playerList.map((p) => { if (p.delete === false){return p.name} }).indexOf(piece.playerName)) == -1) {
                     var player = new Player(piece.pieceId, piece.playerName, piece.id);
                     playerList.push(player);
                     var newPlayer = true;
@@ -48,7 +50,7 @@ exports.createPiece = async (piece) => {
                 newPiece.playersId = [piece.playerName];
                 newPiece.creator = piece.playerName;
                 pieceList.push(newPiece);
-                if ((playerIndex = playerList.map((p) => { return p.name }).indexOf(piece.playerName)) == -1) {
+                if ((playerIndex = playerList.map((p) => { if (p.delete === false){return p.name} }).indexOf(piece.playerName)) == -1) {
                     var player = new Player(piece.pieceId, piece.playerName, piece.id);
                     playerList.push(player);
                     var newPlayer = true;
@@ -63,13 +65,12 @@ exports.createPiece = async (piece) => {
 }
 
 exports.leavePiece = async (piece) => {
-    console.log(piece)
     return new Promise((res, rej) => {
         if (!piece || !piece.pieceId || !piece.playerName)
             rej({ error: 'Wrong piece format' });
         else {
             const pieceIndex = pieceList.map((p) => { return p.id }).indexOf(piece.pieceId);
-            const playerIndex = playerList.map((p) => { return p.name }).indexOf(piece.playerName);
+            const playerIndex = playerList.map((p) => { if (p.delete === false){return p.name} }).indexOf(piece.playerName);
             playerList[playerIndex].delete = true;
             if (pieceList[pieceIndex].playersId.length > 1) {//multi
                 pieceList[pieceIndex].nbPlayersInGame--;
@@ -119,7 +120,7 @@ async function getSpectrums(pieceIndex) {
             j = pieceList[pieceIndex].playersId.length;
             var players = [];
             while (i < j) {
-                let playerIndex = playerList.map((p) => { return p.name }).indexOf(pieceList[pieceIndex].playersId[i]);
+                let playerIndex = playerList.map((p) => { if (p.delete === false){return p.name} }).indexOf(pieceList[pieceIndex].playersId[i]);
                 if (playerIndex != -1) {
                     playerList[playerIndex].game = new Game;
                     if (players === undefined)
@@ -144,7 +145,7 @@ async function delSpectrums(pieceIndex) {
             j = pieceList[pieceIndex].playersId.length;
             var players = [];
             while (i < j) {
-                let playerIndex = playerList.map((p) => { return p.name }).indexOf(pieceList[pieceIndex].playersId[i]);
+                let playerIndex = playerList.map((p) => { if (p.delete === false){return p.name} }).indexOf(pieceList[pieceIndex].playersId[i]);
                 if (playerIndex != -1) {
                     if (players === undefined) {
                         for (let i = 0; i < 22; i++) {
@@ -216,7 +217,7 @@ exports.playerLose = async (data) => {
             if (pieceIndex != -1) {
                 if (pieceList[pieceIndex].playersId.length > 1) {//multi
                     pieceList[pieceIndex].nbPlayersInGame--;
-                    const playerIndex = playerList.map((p) => { return p.name }).indexOf(data.player.name);
+                    const playerIndex = playerList.map((p) => { if (p.delete === false){return p.name} }).indexOf(data.player.name);
                     playerList[playerIndex].lose = true;
                     if (pieceList[pieceIndex].nbPlayersInGame < 2) {
                         pieceList[pieceIndex].nbPlayersInGame = 0;
@@ -255,7 +256,6 @@ exports.updateSpectrum = async (data) => {
 }
 
 exports.checkPlayerId = async (playerId) => {
-    console.log(playerList)
     return new Promise((res, rej) => {
         if (playerList.length == 0) {
             res(true);
@@ -287,10 +287,10 @@ exports.playerDisconnect = async (socketId) => {
                     let pIndex = p.playersId.indexOf(playerList[playerIndex].name);
                     if (pIndex != -1) {
                         p.playersId.splice(pIndex, 1);
-                        p.nbPlayersInGame - 1;
-                        if (pieceList[pieceIndex].nbPlayersInGame < 2) {
-                            pieceList[pieceIndex].nbPlayersInGame = 0;
-                            pieceList[pieceIndex].start = 0;
+                        if (p.nbPlayersInGame > 0) p.nbPlayersInGame - 1;
+                        if (pieceList[pIndex].nbPlayersInGame < 2) {
+                            pieceList[pIndex].nbPlayersInGame = 0;
+                            pieceList[pIndex].start = 0;
                         }
                         if (p.creator === playerList[playerIndex].name && p.playersId.length >= 1)
                             p.creator = p.playersId[0];

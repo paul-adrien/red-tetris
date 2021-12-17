@@ -12,6 +12,9 @@ exports.socketController = (io) => {
         });
 
 
+        socket.on('socketId', () => {
+            return io.to(socket.id).emit('res socketId', socket.id);
+        });
         //pieces
         socket.on('check piece id', (data) => {
             if (data && data.pieceId && data.id) {
