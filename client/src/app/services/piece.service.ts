@@ -78,10 +78,10 @@ export class pieceService implements OnDestroy {
       });
 
     this.socketService.listenToServer("res start piece").subscribe((data) => {
+      console.log(data);
       if (data.piece.id === this.pieceName) {
         this.tetroList = data.piece.tetroList;
         this.playersInGame = data.players;
-        this.start = true;
         this.newTetro = true;
         this.currentTetro = 0;
       }
@@ -111,6 +111,7 @@ export class pieceService implements OnDestroy {
     this.socketService.listenToServer("res player lose").subscribe((data) => {
       if (data && data.piece && data.piece.id === this.pieceName) {
         console.log("player lose", data);
+        this.player.game.spectrum = data.player.game.spectrum;
         if (data.piece.start === true) {
           //un joueur a perdu
         } else {

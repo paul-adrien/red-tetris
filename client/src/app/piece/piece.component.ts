@@ -51,7 +51,7 @@ import { WebsocketService } from "../services/websocketService";
               "
             >
               <div
-                class="row"
+                class="tetriRow"
                 *ngFor="let row of this.pieceService.player.game.spectrum"
               >
                 <div class="col-sm-1 colonne" *ngFor="let col of row">
@@ -100,11 +100,15 @@ export class PieceComponent implements OnInit, OnDestroy {
     private cd: ChangeDetectorRef
   ) {
     this.socketService?.listenToServer("res start piece").subscribe((data) => {
+      console.log("interval listen");
       if (
         this.timer === null &&
-        this.pieceService?.pieceName === data?.piece?.id
-      )
+        this.pieceService?.pieceName === data?.piece?.id &&
+        this.pieceService?.start !== true
+      ) {
+        this.pieceService.start = true;
         this.timerInterval();
+      }
     });
     this.socketService?.listenToServer("updatePlayer").subscribe((data) => {
       if (data?.piece?.id === this.pieceService?.pieceName) {
@@ -113,7 +117,14 @@ export class PieceComponent implements OnInit, OnDestroy {
           if (p?.id === data?.piece?.id) p = data?.piece;
         });
         if (data?.piece?.id === this.pieceService?.pieceName) {
-          if (this.pieceService?.piecePlayers)
+          if (
+            this.pieceService?.piecePlayers &&
+            this.pieceService.piecePlayers
+              .map((p) => {
+                return p;
+              })
+              .indexOf(data?.player?.name) == -1
+          )
             this.pieceService.piecePlayers.push(data?.player?.name);
         }
         this.cd.detectChanges();
@@ -127,7 +138,7 @@ export class PieceComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.timer = null;
+    if (this.timer) this.timer = null;
     this.socketService?.emitToServer("piece list", {
       id: this.socketService?.socket?.id,
     });
@@ -200,6 +211,17 @@ export class PieceComponent implements OnInit, OnDestroy {
             this.pieceService.lock = false;
             this.pieceService.score++;
           } else {
+            if (
+              !this.pieceService.checkNewPlace(
+                this.pieceService.player.game.spectrum,
+                this.pieceService.tetroList[this.pieceService.currentTetro],
+                0,
+                0
+              )
+            ) {
+              this.pieceService.tetroList[this.pieceService.currentTetro]
+                .position.y--;
+            }
             this.pieceService.DrawNewTetro(
               this.pieceService.player.game.spectrum,
               this.pieceService.tetroList[this.pieceService.currentTetro]
@@ -226,6 +248,8 @@ export class PieceComponent implements OnInit, OnDestroy {
           }
         }
         this.pieceService.sendSpectrum();
+      } else {
+        this.endGame();
       }
     }, 900);
   }

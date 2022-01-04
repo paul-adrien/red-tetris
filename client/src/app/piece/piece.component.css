@@ -1,18 +1,21 @@
 .colonne {
-    padding: 0 !important;
-    margin: 0 !important;
-    width: 20px !important;
-    height: 20px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  width: 20px !important;
+  height: 20px !important;
 }
 .cube {
-    padding: 0 !important;
-    margin: 0 !important;
-    width: 100% !important;
-    height: 100% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
 }
 .board {
-    border: solid black 2px;
-    width: 200px;
-    padding: 0 !important;
-    margin: 0 !important;
+  border: solid black 2px;
+  width: 200px;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+.tetriRow {
+  display: flex;
 }

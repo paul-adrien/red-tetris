@@ -36,7 +36,7 @@ import { WebsocketService } from "../services/websocketService";
       </div>
       <div
         class="item-container"
-        *ngFor="let piece of this.pieceList; index as index"
+        *ngFor="let piece of this.pieceService.pieceList; index as index"
       >
         <div class="item-title">{{ piece.id }}</div>
         <div class="input-name">Your name:</div>
@@ -57,7 +57,7 @@ import { WebsocketService } from "../services/websocketService";
 
     <button (click)="getPieceList()">Voir les rooms existantes</button>
   `,
-  styleUrls: ["./home.component.css"],
+  styleUrls: ["./home.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomeComponent implements OnInit, OnChanges {
@@ -137,7 +137,6 @@ export class HomeComponent implements OnInit, OnChanges {
   }
 
   getPieceList() {
-    console.log("test");
     this.socketService.emitToServer("piece list", {
       id: this.socketService.socket.id,
     });
