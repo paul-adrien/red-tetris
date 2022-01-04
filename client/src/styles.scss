@@ -22,13 +22,14 @@ html {
   --background-color-grey: #1a1a1a;
   --background-color-primary: black;
 
-  --light-blue: #00cbcd;
-  --orange: #ee8300;
-  --blue: #1600f2;
-  --red: #f00401;
+  --light-blue: #05aff2;
+  --orange: #ff6b35;
+  //#f24405;
+  --blue: #056cf2;
+  --red: #f22929;
   --purple: #a000f1;
-  --yellow: #f9e608;
-  --green: #00cd03;
+  --yellow: #f2cb05;
+  --green: #038c0c;
 
   &::-webkit-scrollbar {
     display: none !important;
@@ -51,4 +52,8 @@ html {
   min-width: 4rem;
   text-align: center;
   cursor: pointer;
+}
+
+input:focus {
+  outline: none !important;
 }

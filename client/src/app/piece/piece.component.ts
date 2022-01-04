@@ -14,79 +14,68 @@ import { WebsocketService } from "../services/websocketService";
 @Component({
   selector: "app-piece",
   template: `
-    <div class="">
-      <h1>Tetrice piece</h1>
-      <p>Name: {{ this.pieceService.pieceName }}</p>
-      <p>Creator: {{ this.pieceService.pieceCreator }}</p>
-      <div
-        *ngFor="let player of this.pieceService.piecePlayers; index as index"
-      >
-        <p>Player n° {{ index }}: {{ player }}</p>
-      </div>
-      <button
-        *ngIf="
-          this.pieceService.start === false &&
-          this.pieceService.player &&
-          this.pieceService.pieceCreator === this.pieceService.player.name
-        "
-        (click)="this.pieceService.startGame()"
-      >
-        Start the game
-      </button>
-      <div *ngIf="this.pieceService.start === true" class="row">
-        <div *ngIf="this.pieceService.player != null" class="col-md-6">
-          <p>{{ this.pieceService.player.name }}</p>
-        </div>
-      </div>
-      <div *ngIf="pieceService.end != ''">{{ pieceService.end }}</div>
-      <button (click)="this.pieceService.leavePiece()">leave piece</button>
-      <p>Score: {{ pieceService.score }}</p>
-      <div class="row">
-        <div class="col-sm-4">
-          <div class="game">
-            <div
-              class="board"
-              *ngIf="
-                this.pieceService.start === true && this.pieceService.player
-              "
-            >
-              <div
-                class="tetriRow"
-                *ngFor="let row of this.pieceService.player.game.spectrum"
-              >
-                <div class="col-sm-1 colonne" *ngFor="let col of row">
-                  <div
-                    style="background-color: {{ pieceService.colors(col) }};"
-                    class="cube"
-                  ></div>
-                </div>
-              </div>
+    <div class="container">
+      <div class="title">{{ this.pieceService.pieceName }}</div>
+
+      <div class="game-container">
+        <div class="board" *ngIf="this.pieceService.player">
+          <div
+            class="tetriRow"
+            *ngFor="let row of this.pieceService.player.game.spectrum"
+          >
+            <div class="colonne" *ngFor="let col of row">
+              <div [style]="pieceService.colors(col)" class="cube"></div>
             </div>
           </div>
         </div>
-        <ng-container *ngFor="let player of pieceService.playersInGame">
-          <div
-            class="col-sm-4"
-            *ngIf="player && player.name !== pieceService.player.name"
-          >
-            <div class="game">
-              <div class="board" *ngIf="this.pieceService.start === true">
-                <div class="row" *ngFor="let row of player.game.spectrum">
-                  <div class="col-sm-1 colonne" *ngFor="let col of row">
-                    <div
-                      style="background-color: {{ pieceService.colors(col) }};"
-                      class="cube"
-                    ></div>
+        <div class="player-container">
+          <div class="buttons">
+            <div
+              class="primary-button"
+              *ngIf="
+                this.pieceService.start === false &&
+                this.pieceService.player &&
+                this.pieceService.pieceCreator === this.pieceService.player.name
+              "
+              (click)="this.pieceService.startGame()"
+            >
+              Start the game
+            </div>
+
+            <div
+              class="primary-button"
+              (click)="this.pieceService.leavePiece()"
+            >
+              leave piece
+            </div>
+          </div>
+          <p>Creator: {{ this.pieceService.pieceCreator }}</p>
+          <p>
+            Player:
+            {{ this.pieceService.player.name }}
+          </p>
+          <p>Score: {{ pieceService.score }}</p>
+          <div class="other-container">
+            <div *ngFor="let player of pieceService.playersInGame">
+              <div
+                class="board"
+                *ngIf="player.name !== this.pieceService.player.name"
+              >
+                <div class="tetriRow" *ngFor="let row of player.game.spectrum">
+                  <div class="min-colonne" *ngFor="let col of row">
+                    <div [style]="pieceService.colors(col)" class="cube"></div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </ng-container>
+        </div>
       </div>
+
+      <div *ngIf="pieceService.end != ''">{{ pieceService.end }}</div>
     </div>
   `,
-  styleUrls: ["./piece.component.css"],
+  styleUrls: ["./piece.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PieceComponent implements OnInit, OnDestroy {

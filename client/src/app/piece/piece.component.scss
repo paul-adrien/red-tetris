@@ -1,0 +1,62 @@
+:host {
+  display: flex;
+  justify-content: center;
+
+  .container {
+    display: flex;
+    flex-direction: column;
+    max-width: 75rem;
+    width: 100%;
+    padding: 0 2rem;
+  }
+  .title {
+    font-size: 4rem;
+    margin: 1rem 0;
+  }
+
+  .game-container,
+  .buttons,
+  .other-container {
+    display: flex;
+
+    .primary-button {
+      margin-right: 1rem;
+    }
+  }
+
+  .player-container {
+    display: flex;
+    flex-direction: column;
+    margin-top: 1rem;
+  }
+
+  .colonne {
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 35px !important;
+    height: 35px !important;
+  }
+
+  .min-colonne {
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 10px !important;
+    height: 10px !important;
+  }
+
+  .cube {
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  .board {
+    border: solid black 2px;
+    margin-right: 1rem;
+  }
+
+  .tetriRow {
+    display: flex;
+  }
+}

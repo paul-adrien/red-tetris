@@ -155,15 +155,15 @@ export class pieceService implements OnDestroy {
   }
 
   colors(id) {
-    if (id == 0) return "white";
-    else if (id == 1) return "cyan";
-    else if (id == 2) return "green";
-    else if (id == 3) return "red";
-    else if (id == 4) return "purple";
-    else if (id == 5) return "#ECE298";
-    else if (id == 6) return "orange";
-    else if (id == 7) return "grey";
-    else if (id == 404) return "black";
+    if (id == 0) return "background: white";
+    else if (id == 1) return "background: radial-gradient(lightgrey,#05aff2)";
+    else if (id == 2) return "background: radial-gradient(lightgrey,#056cf2)";
+    else if (id == 3) return "background: radial-gradient(lightgrey,#ff6b35)";
+    else if (id == 4) return "background: radial-gradient(lightgrey,#f2cb05)";
+    else if (id == 5) return "background: radial-gradient(lightgrey,#038c0c)";
+    else if (id == 6) return "background: radial-gradient(lightgrey,#a000f1)";
+    else if (id == 7) return "background: radial-gradient(lightgrey,#f22929)";
+    else if (id == 404) return "background: black";
   }
 
   stopAll = (event: Event): void => {

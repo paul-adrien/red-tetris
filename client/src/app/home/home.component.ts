@@ -14,19 +14,32 @@ import { WebsocketService } from "../services/websocketService";
   selector: "app-home",
   template: `
     <div class="title">Bienvenue sur Red-Tetris</div>
+    <div class="primary-button refresh" (click)="getPieceList()">
+      rafraichir
+    </div>
     <div class="container">
       <div class="item-container">
         <div class="item-title">Créer une nouvelle salle</div>
         <div class="input-name">Nom d'utilisateur:</div>
-        <input type="text" maxlength="20" #name />
-        <p class="errorMsg" *ngIf="pieceService.playerNameError != ''">
+        <input
+          type="text"
+          maxlength="20"
+          #name
+          [class.error]="pieceService.playerNameError != ''"
+        />
+        <div class="errorMsg" *ngIf="pieceService.playerNameError != ''">
           {{ pieceService.playerNameError }}
-        </p>
+        </div>
         <div class="input-name">Nom de la salle:</div>
-        <input type="text" maxlength="20" #pieceName />
-        <p class="errorMsg" *ngIf="pieceService.pieceNameError != ''">
+        <input
+          type="text"
+          maxlength="20"
+          #pieceName
+          [class.error]="pieceService.pieceNameError !== ''"
+        />
+        <div class="errorMsg" *ngIf="pieceService.pieceNameError !== ''">
           {{ pieceService.pieceNameError }}
-        </p>
+        </div>
         <div
           class="primary-button"
           (click)="createNewPiece(name.value, pieceName.value)"
@@ -37,31 +50,60 @@ import { WebsocketService } from "../services/websocketService";
       <div
         class="item-container"
         *ngFor="let piece of this.pieceService.pieceList; index as index"
+        [ngClass]="this.getColorClass(index + 1)"
       >
         <div class="item-title">{{ piece.id }}</div>
         <div class="input-name">Your name:</div>
-        <input type="text" maxlength="15" #joinName />
+        <input
+          type="text"
+          maxlength="15"
+          #joinName
+          [class.error]="pieceService.playerNameErrorJoin == index"
+        />
+        <div class="errorMsg" *ngIf="pieceService.playerNameErrorJoin == index">
+          this player name has been already use
+        </div>
 
         <div
-          [ngClass]="this.getColorClass(index + 1)"
           class="primary-button"
           (click)="joinPiece(piece.id, joinName.value, index)"
         >
           Rejoindre la salle
         </div>
-        <p class="errorMsg" *ngIf="pieceService.playerNameErrorJoin == index">
-          this player name has been already use
-        </p>
       </div>
     </div>
-
-    <button (click)="getPieceList()">Voir les rooms existantes</button>
   `,
   styleUrls: ["./home.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomeComponent implements OnInit, OnChanges {
   public pieceList = [];
+  public pieceListtest = [
+    {
+      id: 0,
+    },
+    {
+      id: 2,
+    },
+    {
+      id: 3,
+    },
+    {
+      id: 4,
+    },
+    {
+      id: 5,
+    },
+    {
+      id: 6,
+    },
+    {
+      id: 7,
+    },
+    {
+      id: 8,
+    },
+  ];
 
   constructor(
     private cd: ChangeDetectorRef,
