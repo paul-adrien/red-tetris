@@ -72,16 +72,16 @@ exports.leavePiece = async (piece) => {
         else {
             const pieceIndex = pieceList.map((p) => { return p.id }).indexOf(piece.pieceId);
             const playerIndex = playerList.map((p) => { if (p.delete === false){return p.name} }).indexOf(piece.playerName);
-            playerList[playerIndex].delete = true;
+            if (playerIndex != -1) playerList[playerIndex].delete = true;
             if (pieceList[pieceIndex].playersId.length > 1) {//multi
                 pieceList[pieceIndex].nbPlayersInGame--;
                 pieceList[pieceIndex].playersId.splice(pieceList[pieceIndex].playersId.indexOf(piece.playerName), 1);
                 if (pieceList[pieceIndex].creator === piece.playerName) {
-                    pieceList[pieceIndex].creator = piece.playerName;
+                    pieceList[pieceIndex].creator = pieceList[pieceIndex].playersId[0];
                 }
                 if (pieceList[pieceIndex].nbPlayersInGame < 2) {
                     pieceList[pieceIndex].nbPlayersInGame = 0;
-                    pieceList[pieceIndex].start = 0;
+                    pieceList[pieceIndex].start = false;
                     res({ piece: pieceList[pieceIndex], player: playerList[playerIndex] })
                 } else {
                     res({ piece: pieceList[pieceIndex], player: playerList[playerIndex] })
@@ -149,12 +149,12 @@ async function delSpectrums(pieceIndex) {
                 let playerIndex = playerList.map((p) => { if (p.delete === false){return p.name} }).indexOf(pieceList[pieceIndex].playersId[i]);
                 if (playerIndex != -1) {
                     if (players === undefined) {
-                        for (let i = 0; i < 22; i++) {
+                        for (let i = 0; i < 20; i++) {
                             playerList[playerIndex].game.spectrum[i] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
                         };
                     }
                     else {
-                        for (let i = 0; i < 22; i++) {
+                        for (let i = 0; i < 20; i++) {
                             playerList[playerIndex].game.spectrum[i] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
                         };
                     }
@@ -196,6 +196,7 @@ exports.startPiece = async (data) => {
             if (pieceIndex != -1) {
                 pieceList[pieceIndex].start = true;
                 pieceList[pieceIndex].nbPlayersInGame = pieceList[pieceIndex].playersId.length;
+                pieceList[pieceIndex].tetroList = [];
                 createTetrominos(pieceIndex).then((piece) => {
                     getSpectrums(pieceIndex).then((players) => {
                         console.log(players)

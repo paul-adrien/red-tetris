@@ -110,6 +110,9 @@ export class PieceComponent implements OnInit, OnDestroy {
         this.timerInterval();
       }
     });
+    this.socketService?.listenToServer("res player lose").subscribe((data) => {
+      this.cd.detectChanges();
+    });
     this.socketService?.listenToServer("updatePlayer").subscribe((data) => {
       if (data?.piece?.id === this.pieceService?.pieceName) {
         console.log(data);
@@ -171,10 +174,10 @@ export class PieceComponent implements OnInit, OnDestroy {
 
   timerInterval() {
     this.timer = setInterval(async () => {
+      console.log("test");
       this.cd.detectChanges();
       this.pieceService.lock = true;
       if (this.pieceService?.start === true) {
-        console.log("test");
         if (this.pieceService.newTetro === true) {
           this.pieceService.DrawNewTetro(
             this.pieceService.player.game.spectrum,
@@ -268,7 +271,10 @@ export class PieceComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     clearInterval(this.timer);
-    if (this.pieceService && this.pieceService.pieceName)
+    if (this.pieceService && this.pieceService.pieceName) {
+      console.log("leave piece");
       this.pieceService.leavePiece();
+    } else {
+    }
   }
 }

@@ -111,7 +111,9 @@ export class pieceService implements OnDestroy {
     this.socketService.listenToServer("res player lose").subscribe((data) => {
       if (data && data.piece && data.piece.id === this.pieceName) {
         console.log("player lose", data);
-        this.player.game.spectrum = data.player.game.spectrum;
+        this.player.game.spectrum = data?.player?.game?.spectrum;
+        this.pieceCreator = data?.piece?.creator;
+        this.piecePlayers = data?.piece?.playersId;
         if (data.piece.start === true) {
           //un joueur a perdu
         } else {
