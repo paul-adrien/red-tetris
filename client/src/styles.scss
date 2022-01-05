@@ -1,3 +1,6 @@
+@import "~@angular/material/prebuilt-themes/indigo-pink.css";
+@import "~@angular/material/prebuilt-themes/indigo-pink.css";
+
 @font-face {
   font-family: Tetris;
   src: url("./fonts/VT323/VT323-Regular.ttf");
@@ -15,6 +18,7 @@ html {
   color: var(--color-text);
   background: var(--background-color-grey) !important;
   overflow: hidden;
+  font-size: 1rem !important;
 
   --primary-color: #1a1a1a;
   --secondary-color: #eaa201;
@@ -56,4 +60,9 @@ html {
 
 input:focus {
   outline: none !important;
+}
+
+.mat-dialog-container {
+  box-shadow: none;
+  background: transparent;
 }

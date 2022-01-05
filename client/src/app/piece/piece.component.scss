@@ -1,12 +1,17 @@
 :host {
   display: flex;
   justify-content: center;
+  height: 100%;
+  background: repeat url("../../assets/background-4.jpg");
+  background-size: 33%;
 
   .container {
     display: flex;
     flex-direction: column;
     max-width: 75rem;
     width: 100%;
+    height: 100%;
+
     padding: 0 2rem;
   }
   .title {
@@ -15,13 +20,20 @@
   }
 
   .game-container,
-  .buttons,
-  .other-container {
+  .buttons {
     display: flex;
 
     .primary-button {
       margin-right: 1rem;
     }
+  }
+
+  .other-container {
+    display: flex;
+    margin-top: auto;
+  }
+  .text {
+    margin-bottom: 0.5rem;
   }
 
   .player-container {
@@ -40,8 +52,8 @@
   .min-colonne {
     padding: 0 !important;
     margin: 0 !important;
-    width: 10px !important;
-    height: 10px !important;
+    width: 12px !important;
+    height: 12px !important;
   }
 
   .cube {

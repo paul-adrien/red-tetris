@@ -158,13 +158,20 @@ export class pieceService implements OnDestroy {
 
   colors(id) {
     if (id == 0) return "background: white";
-    else if (id == 1) return "background: radial-gradient(lightgrey,#05aff2)";
-    else if (id == 2) return "background: radial-gradient(lightgrey,#056cf2)";
-    else if (id == 3) return "background: radial-gradient(lightgrey,#ff6b35)";
-    else if (id == 4) return "background: radial-gradient(lightgrey,#f2cb05)";
-    else if (id == 5) return "background: radial-gradient(lightgrey,#038c0c)";
-    else if (id == 6) return "background: radial-gradient(lightgrey,#a000f1)";
-    else if (id == 7) return "background: radial-gradient(lightgrey,#f22929)";
+    else if (id == 1) return "background: radial-gradient(#07f9f9,#05aff2)";
+    // longbar
+    else if (id == 2) return "background: radial-gradient(#079BDB,#056cf2)";
+    // P
+    else if (id == 3) return "background: radial-gradient(#FFA029,#ff6b35)";
+    // L
+    else if (id == 4) return "background: radial-gradient(#F9F907,#f2cb05)";
+    // squqre
+    else if (id == 5) return "background: radial-gradient(#25f369,#038c0c)";
+    // 4
+    else if (id == 6) return "background: radial-gradient(#f040ff,#a000f1)";
+    // T
+    else if (id == 7) return "background: radial-gradient(#fd745f,#f22929)";
+    // Z
     else if (id == 404) return "background: black";
   }
 

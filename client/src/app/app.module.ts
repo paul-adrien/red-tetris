@@ -11,6 +11,9 @@ import { HeaderComponent } from "./header/header.component";
 import { TransiComponent } from "./transi/transi.component";
 import { UrlSerializer } from "@angular/router";
 import { CustomUrlSerializer } from "./customUrlSerializer";
+import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
+import { MatDialogModule } from "@angular/material/dialog";
+import { PopUpGameComponent } from "./pop-up-game/pop-up-game.component";
 
 @NgModule({
   declarations: [
@@ -19,8 +22,18 @@ import { CustomUrlSerializer } from "./customUrlSerializer";
     PieceComponent,
     HeaderComponent,
     TransiComponent,
+    PopUpGameComponent,
   ],
-  imports: [BrowserModule, AppRoutingModule, ReactiveFormsModule, FormsModule],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    ReactiveFormsModule,
+    FormsModule,
+    BrowserAnimationsModule,
+    MatDialogModule,
+  ],
+  entryComponents: [PopUpGameComponent],
+
   providers: [
     WebsocketService,
     { provide: UrlSerializer, useClass: CustomUrlSerializer },

@@ -1,3 +1,4 @@
+import { PopUpGameComponent } from "./../pop-up-game/pop-up-game.component";
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -7,6 +8,7 @@ import {
   OnInit,
 } from "@angular/core";
 import { TestBed } from "@angular/core/testing";
+import { MatDialog } from "@angular/material/dialog";
 import { ActivatedRoute, Router } from "@angular/router";
 import { pieceService } from "../services/piece.service";
 import { WebsocketService } from "../services/websocketService";
@@ -133,13 +135,54 @@ import { WebsocketService } from "../services/websocketService";
             {{ this.pieceService.player.name }}
           </p>
           <p>Score: {{ pieceService.score }}</p>
-          <div class="other-container">
+          <div *ngIf="this.pieceService.start" class="other-container">
             <div *ngFor="let player of pieceService.playersInGame">
+              <div
+                class="text"
+                *ngIf="player.name !== this.pieceService.player.name"
+              >
+                Player: {{ player.name }}
+              </div>
+              <div
+                class="text"
+                *ngIf="player.name !== this.pieceService.player.name"
+              >
+                Score: 0
+              </div>
               <div
                 class="board"
                 *ngIf="player.name !== this.pieceService.player.name"
               >
                 <div class="tetriRow" *ngFor="let row of player.game.spectrum">
+                  <div class="min-colonne" *ngFor="let col of row">
+                    <div [style]="pieceService.colors(col)" class="cube"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="!this.pieceService.start" class="other-container">
+            <div *ngFor="let player of pieceService.piecePlayers">
+              <div
+                class="text"
+                *ngIf="player !== this.pieceService.player.name"
+              >
+                Player: {{ player }}
+              </div>
+              <div
+                class="text"
+                *ngIf="player !== this.pieceService.player.name"
+              >
+                Score: 0
+              </div>
+              <div
+                class="board"
+                *ngIf="player !== this.pieceService.player.name"
+              >
+                <div
+                  class="tetriRow"
+                  *ngFor="let row of this.pieceService.player.game.spectrum"
+                >
                   <div class="min-colonne" *ngFor="let col of row">
                     <div [style]="pieceService.colors(col)" class="cube"></div>
                   </div>
@@ -164,6 +207,7 @@ export class PieceComponent implements OnInit, OnDestroy {
     readonly pieceService: pieceService,
     private socketService: WebsocketService,
     private router: Router,
+    private dialog: MatDialog,
     private cd: ChangeDetectorRef
   ) {
     this.socketService?.listenToServer("res start piece").subscribe((data) => {
@@ -332,6 +376,7 @@ export class PieceComponent implements OnInit, OnDestroy {
     clearInterval(this.timer);
     this.timer = null;
     this.pieceService.end = "END";
+    let dialogRef = this.dialog.open(PopUpGameComponent, {});
     this.socketService.emitToServer("player lose", {
       pieceId: this.pieceService.pieceName,
       player: this.pieceService.player,
