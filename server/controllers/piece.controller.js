@@ -277,8 +277,7 @@ exports.startPiece = async (data) => {
         .indexOf(data.pieceId);
       if (pieceIndex != -1) {
         pieceList[pieceIndex].start = true;
-        pieceList[pieceIndex].nbPlayersInGame =
-          pieceList[pieceIndex].playersId.length;
+        pieceList[pieceIndex].nbPlayersInGame = pieceList[pieceIndex].playersId.length;
         pieceList[pieceIndex].tetroList = [];
         createTetrominos(pieceIndex)
           .then((piece) => {
@@ -401,28 +400,59 @@ exports.playerDisconnect = async (socketId) => {
         return p.id;
       })
       .indexOf(socketId);
+      console.log(playerList[playerIndex])
     if (playerIndex != -1 && playerList[playerIndex].delete === false) {
       playerList[playerIndex].delete = true;
-      pieceList.map((p) => {
+      index = pieceList.map((p, index) => {
         if (p.playersId.length > 0) {
           let pIndex = p.playersId.indexOf(playerList[playerIndex].name);
           if (pIndex != -1) {
             p.playersId.splice(pIndex, 1);
             if (p.nbPlayersInGame > 0) p.nbPlayersInGame - 1;
-            if (pieceList[pIndex].nbPlayersInGame < 2) {
-              pieceList[pIndex].nbPlayersInGame = 0;
-              pieceList[pIndex].start = 0;
+            else if (pieceList[index].nbPlayersInGame < 2) {
+              pieceList[index].nbPlayersInGame = 0;
+              pieceList[index].start = 0;
             }
             if (
               p.creator === playerList[playerIndex].name &&
               p.playersId.length >= 1
             )
               p.creator = p.playersId[0];
-            else p.creator = "";
+            else {
+              pieceList.splice(index, 1);
+            }
+            return index;
           }
         }
       });
-      res(pieceList);
+      res({
+        piece: pieceList[index],
+        player: playerList[playerIndex],
+      });
+    }
+  });
+};
+
+exports.changeGameMode = async (data) => {
+  return new Promise((res, rej) => {
+    console.log(data)
+    if (data && data.pieceId && data.mode != undefined && parseInt(data.mode) >= 0 && parseInt(data.mode) <= 4) {
+      const pieceIndex = pieceList
+        .map((p) => {
+          return p.id;
+        })
+        .indexOf(data.pieceId);
+      if (pieceIndex != -1){
+        pieceList[pieceIndex].mode = data.mode;
+        console.log('data')
+        res({
+          piece: pieceList[pieceIndex]
+        });
+      } else {
+        res(null);
+      }
+    } else {
+      res(null);
     }
   });
 };

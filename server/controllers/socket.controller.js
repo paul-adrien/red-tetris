@@ -7,6 +7,13 @@ exports.socketController = (io) => {
         socket.on('disconnect', () => {
             pieceController.playerDisconnect(socket.id).then((res) => {
                 console.log(res);
+                if (res.piece === undefined) {
+                    pieceController.pieceList().then((res) => {
+                        io.emit('res piece list', res);
+                    })
+                } else {
+                    io.emit('res player lose', res);
+                }
             })
             console.log('user disconnected', socket.id);
         });
@@ -85,7 +92,13 @@ exports.socketController = (io) => {
 
         socket.on('leave piece', async (data) => {
             return pieceController.leavePiece(data).then((res) => {
-                io.emit('res player lose', res);
+                if (res.piece === undefined) {
+                    pieceController.pieceList().then((res) => {
+                        io.emit('res piece list', res);
+                    })
+                } else {
+                    io.emit('res player lose', res);
+                }
             }).catch(err => { console.log(err) });
         });
 
@@ -121,8 +134,10 @@ exports.socketController = (io) => {
         });
 
         socket.on('change mode', async (data) => {
-            console.log('change mode')
-            io.emit('res change mode', data);
+            return pieceController.changeGameMode(data).then((res) => {
+                if (res != null)
+                    io.emit('res change mode', res);
+            }).catch(err => { console.log(err) });
         });
 
 

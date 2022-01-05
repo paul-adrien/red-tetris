@@ -39,6 +39,7 @@ export class pieceService implements OnDestroy {
       this.piecePlayers = data.piece.playersId;
       this.player = data.player;
       this.start = data.piece.start;
+      this.mode = data.piece.mode;
     });
     this.socketService.listenToServer("res join piece").subscribe((data) => {
       //pas besoin de verifier si ca nous est destiner car socketId
@@ -48,6 +49,7 @@ export class pieceService implements OnDestroy {
       this.piecePlayers = data.piece.playersId;
       this.player = data.player;
       this.start = data.piece.start;
+      this.mode = data.piece.mode;
     });
 
     this.socketService.listenToServer("res piece list").subscribe((data) => {
@@ -137,7 +139,7 @@ export class pieceService implements OnDestroy {
 
     this.socketService.listenToServer("res change mode").subscribe((data) => {
       console.log(data);
-      if (data.pieceId === this.pieceName) this.mode = data.mode;
+      if (data.piece.id === this.pieceName) this.mode = data.piece.mode;
     });
   }
 

@@ -41,7 +41,6 @@ import { WebsocketService } from "../services/websocketService";
             >
               Start the game
             </div>
-
             <div
               class="primary-button"
               (click)="this.pieceService.leavePiece()"
@@ -50,6 +49,85 @@ import { WebsocketService } from "../services/websocketService";
             </div>
           </div>
           <p>Creator: {{ this.pieceService.pieceCreator }}</p>
+          <div class="" *ngIf="this.pieceService.start === false">
+            <div class="modeItem">Choix du mode de jeu:</div>
+            <label class="modeItem">
+              <input
+                (click)="this.pieceService.changeGameMode(0)"
+                type="radio"
+                value="critical"
+                name="priority"
+                [checked]="this.pieceService.mode == 0"
+                [disabled]="
+                  this.pieceService.pieceCreator !==
+                  this.pieceService.player.name
+                "
+              />
+              <span>Normal</span>
+            </label>
+            <label class="modeItem">
+              <input
+                (click)="this.pieceService.changeGameMode(1)"
+                type="radio"
+                value="high"
+                name="priority"
+                [checked]="this.pieceService.mode == 1"
+                [disabled]="
+                  this.pieceService.pieceCreator !==
+                  this.pieceService.player.name
+                "
+              />
+              <span>Facile (voir le prochain tetromino)</span>
+            </label>
+            <label class="modeItem">
+              <input
+                (click)="this.pieceService.changeGameMode(2)"
+                type="radio"
+                value="medium"
+                name="priority"
+                [checked]="this.pieceService.mode == 2"
+                [disabled]="
+                  this.pieceService.pieceCreator !==
+                  this.pieceService.player.name
+                "
+              />
+              <span>Mode 2</span>
+            </label>
+            <label class="modeItem">
+              <input
+                (click)="this.pieceService.changeGameMode(3)"
+                type="radio"
+                value="low"
+                name="priority"
+                [checked]="this.pieceService.mode == 3"
+                [disabled]="
+                  this.pieceService.pieceCreator !==
+                  this.pieceService.player.name
+                "
+              />
+              <span>Mode 3</span>
+            </label>
+          </div>
+          <div
+            class="nextTetro"
+            *ngIf="
+              this.pieceService.start === true && this.pieceService.mode === 1
+            "
+          >
+            <p>Next:</p>
+            <div
+              class="tetriRow"
+              *ngFor="
+                let row of this.pieceService.tetroList[
+                  this.pieceService.currentTetro + 1
+                ].tetro
+              "
+            >
+              <div class="min-colonne" *ngFor="let col of row">
+                <div [style]="pieceService.colors(col)" class="cube"></div>
+              </div>
+            </div>
+          </div>
           <p>
             Player:
             {{ this.pieceService.player.name }}
@@ -127,6 +205,9 @@ export class PieceComponent implements OnInit, OnDestroy {
       .subscribe((data) => {
         this.cd.detectChanges();
       });
+    this.socketService?.listenToServer("res change mode").subscribe((data) => {
+      this.cd.detectChanges();
+    });
   }
 
   ngOnInit(): void {
