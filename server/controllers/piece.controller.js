@@ -1,6 +1,7 @@
 const Piece = require("../models/piece.model");
 const Player = require("../models/player.model");
 const Tetromino = require("../models/tetromino.model");
+const HardTetromino = require("../models/hardTetromino.model");
 const Game = require("../models/game.model");
 
 const pieceList = [];
@@ -188,6 +189,7 @@ async function getSpectrums(pieceIndex) {
             }
           })
           .indexOf(pieceList[pieceIndex].playersId[i]);
+          console.log(playerIndex)
         if (playerIndex != -1) {
           playerList[playerIndex].game = new Game();
           if (players === undefined) players[0] = playerList[playerIndex];
@@ -282,7 +284,6 @@ exports.startPiece = async (data) => {
         createTetrominos(pieceIndex)
           .then((piece) => {
             getSpectrums(pieceIndex).then((players) => {
-              console.log(players);
               res({ piece: pieceList[pieceIndex], players: players.players });
             });
           })
@@ -454,6 +455,18 @@ exports.changeGameMode = async (data) => {
     } else {
       res(null);
     }
+  });
+};
+
+exports.getHardTetro = async (data) => {
+  return new Promise((res, rej) => {
+    i = 0;
+    var tetroList = [];
+    while (++i <= data.malus) {
+      tetroList = new HardTetromino();
+    }
+    console.log(tetroList)
+    res(tetroList);
   });
 };
 

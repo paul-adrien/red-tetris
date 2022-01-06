@@ -24,6 +24,8 @@ export class pieceService implements OnDestroy {
   public playersInGame = null;
   public newTetro = true;
   public malus = 0;
+  public malusRotate = 0;
+  public malusAcc = 0;
   public lock = false;
   public score = 0;
   public mode = 0;
@@ -71,21 +73,28 @@ export class pieceService implements OnDestroy {
     this.socketService
       .listenToServer("res check piece id")
       .subscribe((data) => {
-        this.pieceNameError = "Ce nom déjà utilisé";
+        this.pieceNameError = "wrong piece name";
       });
     this.socketService
       .listenToServer("res check player id")
       .subscribe((data) => {
-        this.playerNameError = "Ce nom déjà utilisé";
+        this.playerNameError = "wrong player name";
       });
 
     this.socketService.listenToServer("res start piece").subscribe((data) => {
       console.log(data);
       if (data.piece.id === this.pieceName) {
+        data.players.map((p) => {
+          if (p.name === this.player.name)
+            this.player.game.spectrum = p.game.spectrum;
+        });
         this.tetroList = data.piece.tetroList;
         this.playersInGame = data.players;
         this.newTetro = true;
         this.currentTetro = 0;
+        this.malus = 0;
+        this.malusRotate = 0;
+        this.malusAcc = 0;
       }
     });
 
@@ -102,9 +111,10 @@ export class pieceService implements OnDestroy {
       .listenToServer("res new tetrominos")
       .subscribe((data) => {
         if (data.piece.id === this.pieceName) {
-          //this.tetroList = data.piece.tetroList;
+          var i = 0;
+          var l = this.tetroList.length;
           data.piece.tetroList.forEach((tetro) => {
-            this.tetroList.push(tetro);
+            if (++i >= l) this.tetroList.push(tetro);
           });
           console.log(this.tetroList);
         }
@@ -113,7 +123,8 @@ export class pieceService implements OnDestroy {
     this.socketService.listenToServer("res player lose").subscribe((data) => {
       if (data && data.piece && data.piece.id === this.pieceName) {
         console.log("player lose", data);
-        this.player.game.spectrum = data?.player?.game?.spectrum;
+        if (data?.player)
+          this.player.game.spectrum = data?.player?.game?.spectrum;
         this.pieceCreator = data?.piece?.creator;
         this.piecePlayers = data?.piece?.playersId;
         if (data.piece.start === true) {
@@ -133,9 +144,45 @@ export class pieceService implements OnDestroy {
       if (
         data.pieceId === this.pieceName &&
         this.player.name !== data.playerName
-      )
-        this.malus += data.nbMalus - 1;
+      ) {
+        if (this.mode == 2) {
+          this.malus += data.nbMalus - 1;
+          let malId = Math.floor(Math.random() * 3);
+          console.log(malId);
+          if (malId == 0) {
+            this.malusRotate += 7 * this.malus;
+          } else if (malId == 1) {
+            this.malusAcc += 7 * this.malus;
+          } else {
+            this.socketService.emitToServer("malus hardcore", {
+              pieceId: this.pieceName,
+              playerName: this.player.name,
+              id: this.socketService.socket.id,
+              malus: this.malus,
+            });
+          }
+        } else if (this.mode == 3) {
+          this.malus += data.nbMalus - 1;
+          this.malusRotate += 7 * this.malus;
+          this.malusAcc += 7 * this.malus;
+          this.socketService.emitToServer("malus hardcore", {
+            pieceId: this.pieceName,
+            playerName: this.player.name,
+            id: this.socketService.socket.id,
+            malus: data.nbMalus - 1,
+          });
+        } else if (this.mode != 0) {
+          this.malus += data.nbMalus - 1;
+        }
+      }
     });
+
+    this.socketService
+      .listenToServer("res malus hardcore")
+      .subscribe((data) => {
+        console.log(data);
+        this.tetroList.splice(this.currentTetro + 1, 0, data);
+      });
 
     this.socketService.listenToServer("res change mode").subscribe((data) => {
       console.log(data);

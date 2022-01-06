@@ -93,7 +93,7 @@ import { WebsocketService } from "../services/websocketService";
                   this.pieceService.player.name
                 "
               />
-              <span>Mode 2</span>
+              <span>Difficile</span>
             </label>
             <label class="modeItem">
               <input
@@ -107,7 +107,7 @@ import { WebsocketService } from "../services/websocketService";
                   this.pieceService.player.name
                 "
               />
-              <span>Mode 3</span>
+              <span>Hardcore</span>
             </label>
           </div>
           <div
@@ -363,6 +363,14 @@ export class PieceComponent implements OnInit, OnDestroy {
               this.endGame();
             }
           }
+        }
+        if (this.pieceService.malusRotate > 0) {
+          this.pieceService.malusRotate--;
+          this.pieceService.move("up");
+        }
+        if (this.pieceService.malusAcc > 0) {
+          this.pieceService.malusAcc--;
+          this.pieceService.move("down");
         }
         this.pieceService.sendSpectrum();
       } else {

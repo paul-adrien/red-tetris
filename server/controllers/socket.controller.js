@@ -133,6 +133,13 @@ exports.socketController = (io) => {
             io.emit('res malus', data);
         });
 
+        socket.on('malus hardcore', async (data) => {
+            return pieceController.getHardTetro(data).then((res) => {
+                if (res != null)
+                    io.to(data.id).emit('res malus hardcore', res);
+            }).catch(err => { console.log(err) });
+        });
+
         socket.on('change mode', async (data) => {
             return pieceController.changeGameMode(data).then((res) => {
                 if (res != null)
