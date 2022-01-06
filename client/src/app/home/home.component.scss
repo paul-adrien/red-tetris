@@ -4,8 +4,7 @@
   align-items: center;
   width: 100%;
   height: 100%;
-  background: repeat
-    url("../../assets/360_F_135454229_G5r6NcRcsBOJSi9TyxMrFZNcB2z8ZDzf.jpg");
+  background: repeat url("../../assets/background.jpg");
   overflow: scroll;
 
   .refresh {
@@ -17,13 +16,16 @@
     font-size: 4rem;
     text-align: center;
     margin: 3rem 0;
+    color: black;
+    background: white;
+    border: 4px solid black;
   }
 
   .container {
     display: grid;
     padding: 0 2rem;
     grid-template-columns: repeat(auto-fill, 16rem);
-    grid-gap: 1rem;
+    grid-gap: 1.5rem;
     justify-content: center;
     width: 100%;
     max-width: 75rem;
@@ -33,12 +35,11 @@
 
   .item-container {
     display: flex;
-    width: 14rem;
     height: 13rem;
     flex-direction: column;
     padding: 1rem;
-    border-radius: 8px;
     background-color: gray;
+    border: 4px solid black;
 
     .item-title {
       font-size: 1.5rem;
@@ -53,7 +54,7 @@
     input {
       max-width: 10rem;
       margin-bottom: 0.5rem;
-      border: 1px solid black;
+      border: 2px solid black;
       padding: 2px 6px;
       font-family: "Tetris";
       font-size: 1rem;
@@ -103,4 +104,8 @@
 }
 .errorMsg {
   color: red; //#2e0000
+
+  &.black {
+    color: #2e0000;
+  }
 }

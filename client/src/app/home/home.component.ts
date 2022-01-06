@@ -53,15 +53,19 @@ import { WebsocketService } from "../services/websocketService";
         [ngClass]="this.getColorClass(index + 1)"
       >
         <div class="item-title">{{ piece.id }}</div>
-        <div class="input-name">Your name:</div>
+        <div class="input-name">Nom d'utilisateur:</div>
         <input
           type="text"
           maxlength="15"
           #joinName
           [class.error]="pieceService.playerNameErrorJoin == index"
         />
-        <div class="errorMsg" *ngIf="pieceService.playerNameErrorJoin == index">
-          this player name has been already use
+        <div
+          [class.black]="(index + 1) % 7 === 5 || (index + 1) % 7 === 4"
+          class="errorMsg"
+          *ngIf="pieceService.playerNameErrorJoin == index"
+        >
+          Ce nom est déjà utilisé
         </div>
 
         <div
@@ -227,7 +231,7 @@ export class HomeComponent implements OnInit, OnChanges {
       case 0:
         return "light-blue";
       case 1:
-        return "orange";
+        return "blue";
 
       case 2:
         return "green";
@@ -239,7 +243,7 @@ export class HomeComponent implements OnInit, OnChanges {
         return "red";
 
       case 5:
-        return "blue";
+        return "orange";
 
       case 6:
         return "purple";

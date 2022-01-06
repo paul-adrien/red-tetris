@@ -71,12 +71,12 @@ export class pieceService implements OnDestroy {
     this.socketService
       .listenToServer("res check piece id")
       .subscribe((data) => {
-        this.pieceNameError = "wrong piece name";
+        this.pieceNameError = "Ce nom déjà utilisé";
       });
     this.socketService
       .listenToServer("res check player id")
       .subscribe((data) => {
-        this.playerNameError = "wrong player name";
+        this.playerNameError = "Ce nom déjà utilisé";
       });
 
     this.socketService.listenToServer("res start piece").subscribe((data) => {
