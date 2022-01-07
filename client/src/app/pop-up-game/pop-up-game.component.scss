@@ -1,5 +1,7 @@
 :host {
-  background: url("../../assets/tetris-1.png");
+  display: flex;
+  justify-content: center;
+  align-items: center;
   .title {
     font-size: 18rem;
     color: white;

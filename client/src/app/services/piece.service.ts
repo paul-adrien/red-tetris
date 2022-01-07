@@ -29,6 +29,7 @@ export class pieceService implements OnDestroy {
   public lock = false;
   public score = 0;
   public mode = 0;
+  public win = null;
 
   public end = "";
 
@@ -95,14 +96,17 @@ export class pieceService implements OnDestroy {
         this.malus = 0;
         this.malusRotate = 0;
         this.malusAcc = 0;
+        this.win = false;
       }
     });
 
     this.socketService.listenToServer("res send spectrum").subscribe((data) => {
       if (data.pieceId === this.pieceName) {
         this.playersInGame.map((p) => {
-          if (p.name === data.player.name)
+          if (p.name === data.player.name) {
             p.game.spectrum = data.player.game.spectrum;
+            p.score = data.player.score;
+          }
         });
       }
     });
@@ -129,9 +133,11 @@ export class pieceService implements OnDestroy {
         this.piecePlayers = data?.piece?.playersId;
         if (data.piece.start === true) {
           //un joueur a perdu
+          this.win = false;
         } else {
-          if (this.end === "END") {
+          if (this.end !== "END") {
             //winner
+            this.win = true;
           }
           this.start = false;
           this.end = "END";
@@ -441,6 +447,7 @@ export class pieceService implements OnDestroy {
       pieceId: this.pieceName,
       player: this.player,
       id: this.socketService.socket.id,
+      score: this.score,
     });
   }
 

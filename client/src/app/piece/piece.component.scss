@@ -3,7 +3,7 @@
   justify-content: center;
   height: 100%;
   background: repeat url("../../assets/background.jpg");
-  background-size: 33%;
+  color: black;
 
   .container {
     display: flex;
@@ -17,11 +17,16 @@
   .title {
     font-size: 4rem;
     margin: 1rem 0;
+    background: white;
+    width: fit-content;
+    padding: 0 0.5rem;
+    border: 2px solid black;
   }
 
   .game-container,
   .buttons {
     display: flex;
+    margin-bottom: 1rem;
 
     .primary-button {
       margin-right: 1rem;
@@ -31,15 +36,28 @@
   .other-container {
     display: flex;
     margin-top: auto;
+    margin-bottom: 1rem;
   }
+
   .text {
     margin-bottom: 0.5rem;
+  }
+
+  .next-container {
+    display: flex;
+    background: white;
+    width: 36px;
+    height: 36px;
   }
 
   .player-container {
     display: flex;
     flex-direction: column;
-    margin-top: 1rem;
+    font-size: 1.4rem;
+    background: #d3d3d3c7;
+    padding: 0 1rem;
+    border: 2px solid black;
+    min-width: 18rem;
   }
 
   .colonne {
@@ -66,6 +84,7 @@
   .board {
     border: solid black 2px;
     margin-right: 1rem;
+    width: fit-content;
   }
 
   .tetriRow {

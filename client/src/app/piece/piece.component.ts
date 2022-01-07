@@ -12,6 +12,7 @@ import { MatDialog } from "@angular/material/dialog";
 import { ActivatedRoute, Router } from "@angular/router";
 import { pieceService } from "../services/piece.service";
 import { WebsocketService } from "../services/websocketService";
+import { interval } from "rxjs";
 
 @Component({
   selector: "app-piece",
@@ -19,6 +20,22 @@ import { WebsocketService } from "../services/websocketService";
     <div class="container">
       <div class="title">{{ this.pieceService.pieceName }}</div>
 
+      <div class="buttons">
+        <div
+          class="primary-button"
+          *ngIf="
+            this.pieceService.start === false &&
+            this.pieceService.player &&
+            this.pieceService.pieceCreator === this.pieceService.player.name
+          "
+          (click)="this.pieceService.startGame()"
+        >
+          Commencer la partie
+        </div>
+        <div class="primary-button" (click)="this.pieceService.leavePiece()">
+          Quitter la partie
+        </div>
+      </div>
       <div class="game-container">
         <div class="board" *ngIf="this.pieceService.player">
           <div
@@ -31,26 +48,29 @@ import { WebsocketService } from "../services/websocketService";
           </div>
         </div>
         <div class="player-container">
-          <div class="buttons">
-            <div
-              class="primary-button"
-              *ngIf="
-                this.pieceService.start === false &&
-                this.pieceService.player &&
-                this.pieceService.pieceCreator === this.pieceService.player.name
-              "
-              (click)="this.pieceService.startGame()"
-            >
-              Start the game
-            </div>
-            <div
-              class="primary-button"
-              (click)="this.pieceService.leavePiece()"
-            >
-              leave piece
+          <div
+            class="nextTetro"
+            *ngIf="
+              this.pieceService.start === true && this.pieceService.mode === 1
+            "
+          >
+            <p>Next:</p>
+            <div class="next-container">
+              <div
+                class="tetriRow"
+                *ngFor="
+                  let row of this.pieceService.tetroList[
+                    this.pieceService.currentTetro + 1
+                  ].tetro
+                "
+              >
+                <div class="min-colonne" *ngFor="let col of row">
+                  <div [style]="pieceService.colors(col)" class="cube"></div>
+                </div>
+              </div>
             </div>
           </div>
-          <p>Creator: {{ this.pieceService.pieceCreator }}</p>
+          <p>Créateur: {{ this.pieceService.pieceCreator }}</p>
           <div class="" *ngIf="this.pieceService.start === false">
             <div class="modeItem">Choix du mode de jeu:</div>
             <label class="modeItem">
@@ -110,31 +130,12 @@ import { WebsocketService } from "../services/websocketService";
               <span>Hardcore</span>
             </label>
           </div>
-          <div
-            class="nextTetro"
-            *ngIf="
-              this.pieceService.start === true && this.pieceService.mode === 1
-            "
-          >
-            <p>Next:</p>
-            <div
-              class="tetriRow"
-              *ngFor="
-                let row of this.pieceService.tetroList[
-                  this.pieceService.currentTetro + 1
-                ].tetro
-              "
-            >
-              <div class="min-colonne" *ngFor="let col of row">
-                <div [style]="pieceService.colors(col)" class="cube"></div>
-              </div>
-            </div>
-          </div>
+
           <p>
             Player:
             {{ this.pieceService.player.name }}
           </p>
-          <p>Score: {{ pieceService.score }}</p>
+          <div>Score: {{ pieceService.score }}</div>
           <div *ngIf="this.pieceService.start" class="other-container">
             <div *ngFor="let player of pieceService.playersInGame">
               <div
@@ -147,7 +148,7 @@ import { WebsocketService } from "../services/websocketService";
                 class="text"
                 *ngIf="player.name !== this.pieceService.player.name"
               >
-                Score: 0
+                Score: {{ player?.score }}
               </div>
               <div
                 class="board"
@@ -192,8 +193,6 @@ import { WebsocketService } from "../services/websocketService";
           </div>
         </div>
       </div>
-
-      <div *ngIf="pieceService.end != ''">{{ pieceService.end }}</div>
     </div>
   `,
   styleUrls: ["./piece.component.scss"],
@@ -201,6 +200,7 @@ import { WebsocketService } from "../services/websocketService";
 })
 export class PieceComponent implements OnInit, OnDestroy {
   public timer = null;
+  public dialogRef;
 
   constructor(
     private routes: ActivatedRoute,
@@ -223,6 +223,22 @@ export class PieceComponent implements OnInit, OnDestroy {
     });
     this.socketService?.listenToServer("res player lose").subscribe((data) => {
       this.cd.detectChanges();
+      console.log(
+        "icibg",
+        this.pieceService.win,
+        this.pieceService.player.name
+      );
+      if (!this.dialogRef) {
+        this.dialogRef = this.dialog.open(PopUpGameComponent, {
+          data: {
+            isWin: this.pieceService.win,
+          },
+          backdropClass: "backdrop",
+        });
+        setTimeout(() => {
+          this.dialogRef.close();
+        }, 10000);
+      }
     });
     this.socketService?.listenToServer("updatePlayer").subscribe((data) => {
       if (data?.piece?.id === this.pieceService?.pieceName) {
@@ -373,8 +389,6 @@ export class PieceComponent implements OnInit, OnDestroy {
           this.pieceService.move("down");
         }
         this.pieceService.sendSpectrum();
-      } else {
-        this.endGame();
       }
     }, 900);
   }
@@ -384,7 +398,7 @@ export class PieceComponent implements OnInit, OnDestroy {
     clearInterval(this.timer);
     this.timer = null;
     this.pieceService.end = "END";
-    let dialogRef = this.dialog.open(PopUpGameComponent, {});
+
     this.socketService.emitToServer("player lose", {
       pieceId: this.pieceService.pieceName,
       player: this.pieceService.player,

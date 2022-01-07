@@ -189,7 +189,7 @@ async function getSpectrums(pieceIndex) {
             }
           })
           .indexOf(pieceList[pieceIndex].playersId[i]);
-          console.log(playerIndex)
+        console.log(playerIndex);
         if (playerIndex != -1) {
           playerList[playerIndex].game = new Game();
           if (players === undefined) players[0] = playerList[playerIndex];
@@ -279,7 +279,8 @@ exports.startPiece = async (data) => {
         .indexOf(data.pieceId);
       if (pieceIndex != -1) {
         pieceList[pieceIndex].start = true;
-        pieceList[pieceIndex].nbPlayersInGame = pieceList[pieceIndex].playersId.length;
+        pieceList[pieceIndex].nbPlayersInGame =
+          pieceList[pieceIndex].playersId.length;
         pieceList[pieceIndex].tetroList = [];
         createTetrominos(pieceIndex)
           .then((piece) => {
@@ -319,6 +320,7 @@ exports.playerLose = async (data) => {
             })
             .indexOf(data.player.name);
           playerList[playerIndex].lose = true;
+          playerList[playerIndex].win = false;
           if (pieceList[pieceIndex].nbPlayersInGame < 2) {
             pieceList[pieceIndex].nbPlayersInGame = 0;
             pieceList[pieceIndex].start = 0;
@@ -350,7 +352,8 @@ exports.playerLose = async (data) => {
 
 exports.updateSpectrum = async (data) => {
   return new Promise((res, rej) => {
-    if (!data || !data.pieceId || !data.player) rej({ error: "Wrong format" });
+    if (!data || !data.pieceId || !data.player || data?.score < 0)
+      rej({ error: "Wrong format" });
     else {
       const pieceIndex = pieceList
         .map((p) => {
@@ -361,7 +364,9 @@ exports.updateSpectrum = async (data) => {
         const playerIndex = pieceList[pieceIndex].playersId.indexOf(
           data.player.name
         );
+        data.player.score = data.score;
         playerList[playerIndex].game.spectrum = data.player.game.spectrum;
+        playerList[playerIndex].score = data.score;
         res({ pieceId: data.pieceId, player: data.player });
       } else {
         rej({ error: "this piece doesn't exist" });
@@ -401,7 +406,7 @@ exports.playerDisconnect = async (socketId) => {
         return p.id;
       })
       .indexOf(socketId);
-      console.log(playerList[playerIndex])
+    console.log(playerList[playerIndex]);
     if (playerIndex != -1 && playerList[playerIndex].delete === false) {
       playerList[playerIndex].delete = true;
       index = pieceList.map((p, index) => {
@@ -436,18 +441,24 @@ exports.playerDisconnect = async (socketId) => {
 
 exports.changeGameMode = async (data) => {
   return new Promise((res, rej) => {
-    console.log(data)
-    if (data && data.pieceId && data.mode != undefined && parseInt(data.mode) >= 0 && parseInt(data.mode) <= 4) {
+    console.log(data);
+    if (
+      data &&
+      data.pieceId &&
+      data.mode != undefined &&
+      parseInt(data.mode) >= 0 &&
+      parseInt(data.mode) <= 4
+    ) {
       const pieceIndex = pieceList
         .map((p) => {
           return p.id;
         })
         .indexOf(data.pieceId);
-      if (pieceIndex != -1){
+      if (pieceIndex != -1) {
         pieceList[pieceIndex].mode = data.mode;
-        console.log('data')
+        console.log("data");
         res({
-          piece: pieceList[pieceIndex]
+          piece: pieceList[pieceIndex],
         });
       } else {
         res(null);
@@ -465,7 +476,7 @@ exports.getHardTetro = async (data) => {
     while (++i <= data.malus) {
       tetroList = new HardTetromino();
     }
-    console.log(tetroList)
+    console.log(tetroList);
     res(tetroList);
   });
 };
