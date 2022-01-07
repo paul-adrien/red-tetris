@@ -168,14 +168,14 @@ export class pieceService implements OnDestroy {
             });
           }
         } else if (this.mode == 3) {
-          this.malus += data.nbMalus - 1;
+          this.malus += data.nbMalus;
           this.malusRotate += 7 * this.malus;
           this.malusAcc += 7 * this.malus;
           this.socketService.emitToServer("malus hardcore", {
             pieceId: this.pieceName,
             playerName: this.player.name,
             id: this.socketService.socket.id,
-            malus: data.nbMalus - 1,
+            malus: data.nbMalus,
           });
         } else if (this.mode != 0) {
           this.malus += data.nbMalus - 1;

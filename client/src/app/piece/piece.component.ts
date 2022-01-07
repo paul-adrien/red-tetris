@@ -51,7 +51,7 @@ import { interval } from "rxjs";
           <div
             class="nextTetro"
             *ngIf="
-              this.pieceService.start === true && this.pieceService.mode === 1
+              this.pieceService.start === true && this.pieceService.mode === 0
             "
           >
             <p>Next:</p>
@@ -85,7 +85,7 @@ import { interval } from "rxjs";
                   this.pieceService.player.name
                 "
               />
-              <span>Normal</span>
+              <span>Facile</span>
             </label>
             <label class="modeItem">
               <input
@@ -99,7 +99,7 @@ import { interval } from "rxjs";
                   this.pieceService.player.name
                 "
               />
-              <span>Facile (voir le prochain tetromino)</span>
+              <span>Normal</span>
             </label>
             <label class="modeItem">
               <input
@@ -130,7 +130,6 @@ import { interval } from "rxjs";
               <span>Hardcore</span>
             </label>
           </div>
-
           <p>
             Player:
             {{ this.pieceService.player.name }}
