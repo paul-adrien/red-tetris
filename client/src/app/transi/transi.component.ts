@@ -10,9 +10,9 @@ import { WebsocketService } from "../services/websocketService";
 })
 export class TransiComponent implements OnInit {
   constructor(private router: Router, private socketService: WebsocketService) {
-    this.socketService.listenToServer("res join piece").subscribe((data) => {
-      this.router.navigate([
-        `${hashKey}${data.piece.id}[${data.player.name}]/piece`,
+    this.socketService?.listenToServer("res join piece").subscribe((data) => {
+      this.router?.navigate([
+        `${hashKey}${data?.piece?.id}[${data?.player?.name}]/piece`,
       ]);
     });
     this.socketService
@@ -23,14 +23,14 @@ export class TransiComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const url = this.router.url;
-    let paramRoomId = url.split("#")[1].split("[")[0];
-    let paramPlayerName = url.split("[")[1].split("]")[0];
+    const url = this.router?.url;
+    let paramRoomId = url?.split("#")[1]?.split("[")[0];
+    let paramPlayerName = url?.split("[")[1]?.split("]")[0];
     // console.log(paramRoomId, paramPlayerName, this.socketService.socket.id);
-    this.socketService.emitToServer("join piece", {
+    this.socketService?.emitToServer("join piece", {
       pieceId: paramRoomId,
       playerName: paramPlayerName,
-      id: this.socketService.socket.id,
+      id: this.socketService?.socket?.id,
     });
   }
 }

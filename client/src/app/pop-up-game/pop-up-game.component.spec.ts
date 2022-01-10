@@ -1,19 +1,21 @@
 /* tslint:disable:no-unused-variable */
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
-import { DebugElement } from '@angular/core';
+import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { By } from "@angular/platform-browser";
+import { DebugElement } from "@angular/core";
 
-import { PopUpGameComponent } from './pop-up-game.component';
+import { PopUpGameComponent } from "./pop-up-game.component";
+import { MatDialogModule, MAT_DIALOG_DATA } from "@angular/material/dialog";
 
-describe('PopUpGameComponent', () => {
+describe("PopUpGameComponent", () => {
   let component: PopUpGameComponent;
   let fixture: ComponentFixture<PopUpGameComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ PopUpGameComponent ]
-    })
-    .compileComponents();
+      declarations: [PopUpGameComponent],
+      providers: [{ provide: MAT_DIALOG_DATA, useValue: {} }],
+      imports: [MatDialogModule],
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -22,7 +24,7 @@ describe('PopUpGameComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

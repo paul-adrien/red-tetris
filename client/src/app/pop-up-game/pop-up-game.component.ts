@@ -13,7 +13,7 @@ export class PopUpGameComponent implements OnInit {
   public number = Math.floor(Math.random() * 5) + 1;
 
   ngOnInit() {
-    this.isWin = this.data.isWin;
+    this.isWin = this.data?.isWin;
   }
 
   randomGif() {

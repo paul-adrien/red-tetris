@@ -47,7 +47,7 @@ exports.createPiece = async (piece) => {
           success: "This piece is start, wait the end",
           piece: pieceList[pieceIndex],
         });
-      } else if (pieceIndex != -1) {
+      } else if (pieceIndex != -1 && pieceList[pieceIndex].playersId.length < 5) {
         pieceList[pieceIndex].playersId.push(piece.playerName);
         if (pieceList[pieceIndex].creator === "")
           pieceList[pieceIndex].creator = piece.playerName;
@@ -74,7 +74,7 @@ exports.createPiece = async (piece) => {
           newPiece: false,
           newPlayer: newPlayer,
         });
-      } else {
+      } else if (pieceIndex == -1) {
         const newPiece = new Piece(piece.pieceId);
         newPiece.playersId = [piece.playerName];
         newPiece.creator = piece.playerName;
