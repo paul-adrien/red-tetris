@@ -1,5 +1,5 @@
 import { DefaultUrlSerializer, UrlSerializer, UrlTree } from "@angular/router";
-export const hashKey = "aze";
+export const hashKey = "7d7a76a09d002f7ed5fa47e7f126f1bf432c557b";
 
 export class CustomUrlSerializer implements UrlSerializer {
   parse(url: any): UrlTree {

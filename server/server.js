@@ -2,7 +2,7 @@ const http = require('http');
 const app = require('./app');
 const socketController = require('./controllers/socket.controller');
 
-app.set('port', 8080);
+app.set('port', 3000);
 
 const server = http.createServer(app);
 const options = {
@@ -17,12 +17,12 @@ const io = require('socket.io')(server, options);
 
 server.on('listening', () => {
     const address = server.address();
-    const bind = typeof address === 'string' ? 'pipe ' + address : 'port ' + 8080;
+    const bind = typeof address === 'string' ? 'pipe ' + address : 'port ' + 3000;
     console.log('Listening on ' + bind);
 });
 
 socketController.socketController(io);
 
-server.listen(8080, () => {
-    console.log(`Server is running on port 8080.`);
+server.listen(3000, () => {
+    console.log(`Server is running on port 3000.`);
 });

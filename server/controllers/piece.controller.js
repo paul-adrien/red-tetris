@@ -125,7 +125,7 @@ exports.leavePiece = async (piece) => {
         })
         .indexOf(piece.playerName);
       if (playerIndex != -1) playerList[playerIndex].delete = true;
-      if (pieceList[pieceIndex].playersId.length > 1) {
+      if (pieceList[pieceIndex]?.playersId?.length > 1) {
         //multi
         pieceList[pieceIndex].nbPlayersInGame--;
         pieceList[pieceIndex].playersId.splice(
@@ -406,21 +406,23 @@ exports.playerDisconnect = async (socketId) => {
         return p.id;
       })
       .indexOf(socketId);
-    console.log(playerList[playerIndex]);
     if (playerIndex != -1 && playerList[playerIndex].delete === false) {
-      playerList[playerIndex].delete = true;
+      var pName = playerList[playerIndex].name;
+      playerList.splice(playerIndex, 1)
       index = pieceList.map((p, index) => {
         if (p.playersId.length > 0) {
-          let pIndex = p.playersId.indexOf(playerList[playerIndex].name);
+          let pIndex = p.playersId.indexOf(pName);
           if (pIndex != -1) {
             p.playersId.splice(pIndex, 1);
-            if (p.nbPlayersInGame > 0) p.nbPlayersInGame - 1;
-            else if (pieceList[index].nbPlayersInGame < 2) {
-              pieceList[index].nbPlayersInGame = 0;
-              pieceList[index].start = 0;
+            if (p.nbPlayersInGame > 0){
+              p.nbPlayersInGame - 1;
+              if (p.nbPlayersInGame == 1) {
+                p.nbPlayersInGame = 0;
+                p.start = false;
+              }
             }
             if (
-              p.creator === playerList[playerIndex].name &&
+              p.creator === pName &&
               p.playersId.length >= 1
             )
               p.creator = p.playersId[0];

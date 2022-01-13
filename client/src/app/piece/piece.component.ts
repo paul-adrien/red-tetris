@@ -224,22 +224,24 @@ export class PieceComponent implements OnInit, OnDestroy {
       }
     });
     this.socketService?.listenToServer("res player lose").subscribe((data) => {
-      this.cd.detectChanges();
-      console.log(
-        "icibg",
-        this.pieceService.win,
-        this.pieceService.player.name
-      );
-      if (!this.dialogRef) {
-        this.dialogRef = this.dialog?.open(PopUpGameComponent, {
-          data: {
-            isWin: this.pieceService.win,
-          },
-          backdropClass: "backdrop",
-        });
-        setTimeout(() => {
-          this.dialogRef.close();
-        }, 10000);
+      if (data?.piece?.id === this.pieceService?.pieceName) {
+        this.cd.detectChanges();
+        console.log(
+          "icibg",
+          this.pieceService.win,
+          this.pieceService.player.name
+        );
+        if (!this.dialogRef) {
+          this.dialogRef = this.dialog?.open(PopUpGameComponent, {
+            data: {
+              isWin: this.pieceService.win,
+            },
+            backdropClass: "backdrop",
+          });
+          setTimeout(() => {
+            this.dialogRef.close();
+          }, 10000);
+        }
       }
     });
     this.socketService?.listenToServer("updatePlayer").subscribe((data) => {

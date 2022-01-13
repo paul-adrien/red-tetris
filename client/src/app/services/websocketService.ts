@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Observable, Subject } from "rxjs";
 import { io } from "socket.io-client";
+import { environment } from "src/environments/environment";
 
 @Injectable()
 export class WebsocketService {
@@ -10,7 +11,7 @@ export class WebsocketService {
   constructor() {}
 
   setupSocketConnection() {
-    this.socket = io("http://localhost:8080");
+    this.socket = io(environment.SOCKET_API);
   }
 
   private socketIdSetter = new Subject<any>();
