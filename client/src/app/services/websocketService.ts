@@ -6,19 +6,11 @@ import { environment } from "src/environments/environment";
 @Injectable()
 export class WebsocketService {
   public socket;
-  public socketId;
 
   constructor() {}
 
   setupSocketConnection() {
     this.socket = io(environment.SOCKET_API);
-  }
-
-  private socketIdSetter = new Subject<any>();
-  socketIdSetterObs = this.socketIdSetter.asObservable();
-  setSocketId(id: string) {
-    this.socketId = id;
-    this.socketIdSetter?.next();
   }
 
   listenToServer(connection: string): Observable<any> {

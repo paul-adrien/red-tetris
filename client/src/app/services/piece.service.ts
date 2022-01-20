@@ -1,5 +1,6 @@
 import { Injectable, OnDestroy } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
+import { hashKey } from "../customUrlSerializer";
 import { WebsocketService } from "./websocketService";
 
 @Injectable({
@@ -34,82 +35,20 @@ export class pieceService implements OnDestroy {
   public end = "";
 
   constructor(private routes: Router, private socketService: WebsocketService) {
-    this.socketService.listenToServer("res create piece").subscribe((data) => {
-      //pas besoin de verifier si ca nous est destiner car socketId
-      this.pieceName = data.piece.id;
-      this.pieceCreator = data.piece.creator;
-      this.pieceStart = data.piece.start;
-      this.piecePlayers = data.piece.playersId;
-      this.player = data.player;
-      this.start = data.piece.start;
-      this.mode = data.piece.mode;
-    });
-    this.socketService.listenToServer("res join piece").subscribe((data) => {
-      //pas besoin de verifier si ca nous est destiner car socketId
-      this.pieceName = data.piece.id;
-      this.pieceCreator = data.piece.creator;
-      this.pieceStart = data.piece.start;
-      this.piecePlayers = data.piece.playersId;
-      this.player = data.player;
-      this.start = data.piece.start;
-      this.mode = data.piece.mode;
-    });
-
-    this.socketService.listenToServer("res piece list").subscribe((data) => {
-      console.log(data);
-      this.pieceList = data;
-    });
-    this.socketService.listenToServer("updatePiece").subscribe((data) => {
-      console.log("update piece", data);
-      this.pieceList.push(data.piece);
-      console.log(this.pieceList);
-    });
+    this.socketService
+      .listenToServer("res create/join piece")
+      .subscribe((data) => {
+        this.initPiece(data);
+        this.routes.navigate([
+          `${hashKey}${data.piece.id}[${data.player.name}]/piece`,
+        ]);
+      });
 
     this.socketService
       .listenToServer("res check player join id")
       .subscribe((data) => {
         this.playerNameErrorJoin = data.index;
       });
-
-    this.socketService
-      .listenToServer("res check piece id")
-      .subscribe((data) => {
-        this.pieceNameError = "wrong piece name";
-      });
-    this.socketService
-      .listenToServer("res check player id")
-      .subscribe((data) => {
-        this.playerNameError = "wrong player name";
-      });
-
-    this.socketService.listenToServer("res start piece").subscribe((data) => {
-      console.log(data);
-      if (data.piece.id === this.pieceName) {
-        data.players.map((p) => {
-          if (p.name === this.player.name)
-            this.player.game.spectrum = p.game.spectrum;
-        });
-        this.tetroList = data.piece.tetroList;
-        this.playersInGame = data.players;
-        this.newTetro = true;
-        this.currentTetro = 0;
-        this.malus = 0;
-        this.malusRotate = 0;
-        this.malusAcc = 0;
-        this.win = false;
-      }
-    });
-
-    this.socketService.listenToServer("res send spectrum").subscribe((data) => {
-      if (data.pieceId === this.pieceName) {
-        this.playersInGame.map((p) => {
-          if (p.name === data.player.name) {
-            p.game.spectrum = data.player.game.spectrum;
-            p.score = data.player.score;
-          }
-        });
-      }
-    });
 
     this.socketService
       .listenToServer("res new tetrominos")
@@ -120,14 +59,12 @@ export class pieceService implements OnDestroy {
           data.piece.tetroList.forEach((tetro) => {
             if (++i >= l) this.tetroList.push(tetro);
           });
-          console.log(this.tetroList);
         }
       });
 
     this.socketService.listenToServer("res player lose").subscribe((data) => {
       if (data && data.piece && data.piece.id === this.pieceName) {
-        console.log("player lose", data);
-        if (data?.player)
+        if (data?.player && this.socketService.socket.id == data.player?.id)
           this.player.game.spectrum = data?.player?.game?.spectrum;
         this.pieceCreator = data?.piece?.creator;
         this.piecePlayers = data?.piece?.playersId;
@@ -189,24 +126,45 @@ export class pieceService implements OnDestroy {
         console.log(data);
         this.tetroList.splice(this.currentTetro + 1, 0, data);
       });
-
-    this.socketService.listenToServer("res change mode").subscribe((data) => {
-      console.log(data);
-      if (data.piece.id === this.pieceName) this.mode = data.piece.mode;
-    });
   }
 
   ngOnDestroy() {
-    //window.clearInterval(this.timer)
     this.leavePiece();
   }
 
   startGame() {
-    this.socketService.emitToServer("start piece", {
+    this.socketService?.emitToServer("start piece", {
       pieceId: this.pieceName,
       playerName: this.player.name,
-      id: this.socketService.socket.id,
+      id: this.socketService?.socket?.id,
     });
+  }
+
+  resStartGame(data) {
+    if (data?.piece?.id === this.pieceName) {
+      data.players.map((p) => {
+        if (p.name === this.player?.name)
+          this.player.game.spectrum = p?.game?.spectrum;
+      });
+      this.tetroList = data?.piece?.tetroList;
+      this.playersInGame = data.players;
+      this.newTetro = true;
+      this.currentTetro = 0;
+      this.malus = 0;
+      this.malusRotate = 0;
+      this.malusAcc = 0;
+      this.win = false;
+    }
+  }
+
+  initPiece(data) {
+    this.pieceName = data?.piece?.id;
+    this.pieceCreator = data?.piece?.creator;
+    this.pieceStart = data?.piece?.start;
+    this.piecePlayers = data?.piece?.playersId;
+    this.player = data?.player;
+    this.start = data?.piece?.start;
+    this.mode = data?.piece?.mode;
   }
 
   colors(id) {
@@ -446,16 +404,16 @@ export class pieceService implements OnDestroy {
     this.socketService.emitToServer("send spectrum", {
       pieceId: this.pieceName,
       player: this.player,
-      id: this.socketService.socket.id,
+      id: this.socketService?.socket?.id,
       score: this.score,
     });
   }
 
   changeGameMode(mode: number) {
-    this.socketService.emitToServer("change mode", {
+    this.socketService?.emitToServer("change mode", {
       pieceId: this.pieceName,
       mode: mode,
-      id: this.socketService.socket.id,
+      id: this.socketService?.socket?.id,
     });
   }
 
@@ -464,8 +422,8 @@ export class pieceService implements OnDestroy {
       {
         this.socketService.emitToServer("leave piece", {
           pieceId: this.pieceName,
-          playerName: this.player.name,
-          id: this.socketService.socket.id,
+          playerName: this.player?.name,
+          id: this.socketService?.socket?.id,
         });
       }
       this.pieceName = "";

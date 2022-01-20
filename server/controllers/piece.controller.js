@@ -192,6 +192,8 @@ async function getSpectrums(pieceIndex) {
         console.log(playerIndex);
         if (playerIndex != -1) {
           playerList[playerIndex].game = new Game();
+          playerList[playerIndex].lose = false;
+          playerList[playerIndex].win = false;
           if (players === undefined) players[0] = playerList[playerIndex];
           else players.push(playerList[playerIndex]);
         }
@@ -309,7 +311,8 @@ exports.playerLose = async (data) => {
         })
         .indexOf(data.pieceId);
       if (pieceIndex != -1) {
-        if (pieceList[pieceIndex].playersId.length > 1) {
+        l = pieceList[pieceIndex].playersId.length
+        if (l > 1) {
           //multi
           pieceList[pieceIndex].nbPlayersInGame--;
           const playerIndex = playerList
@@ -323,10 +326,18 @@ exports.playerLose = async (data) => {
           playerList[playerIndex].win = false;
           if (pieceList[pieceIndex].nbPlayersInGame < 2) {
             pieceList[pieceIndex].nbPlayersInGame = 0;
-            pieceList[pieceIndex].start = 0;
+            pieceList[pieceIndex].start = false;
+            winner = '';
+            for (let i = 0; i < l; i++) {
+              let pId = playerList.map((p) => {return p.name}).indexOf(pieceList[pieceIndex].playersId[i])
+              if (pId != -1 && playerList[pId]?.lose !== true){
+                winner = playerList[pId].name;
+              }
+            }
             res({
               piece: pieceList[pieceIndex],
               player: playerList[playerIndex],
+              winner: winner
             });
           } else {
             res({
@@ -337,7 +348,7 @@ exports.playerLose = async (data) => {
         } else {
           //solo
           pieceList[pieceIndex].nbPlayersInGame = 0;
-          pieceList[pieceIndex].start = 0;
+          pieceList[pieceIndex].start = false;
           res({
             piece: pieceList[pieceIndex],
             player: playerList[playerIndex],

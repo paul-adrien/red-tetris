@@ -213,12 +213,14 @@ export class PieceComponent implements OnInit, OnDestroy {
     private cd: ChangeDetectorRef
   ) {
     this.socketService?.listenToServer("res start piece").subscribe((data) => {
-      console.log("interval listen");
       if (
         this.timer === null &&
         this.pieceService?.pieceName === data?.piece?.id &&
         this.pieceService?.start !== true
       ) {
+        this.pieceService.resStartGame(data);
+        clearInterval(this.timer);
+        this.timer = null;
         this.pieceService.start = true;
         this.timerInterval();
       }
@@ -226,27 +228,42 @@ export class PieceComponent implements OnInit, OnDestroy {
     this.socketService?.listenToServer("res player lose").subscribe((data) => {
       if (data?.piece?.id === this.pieceService?.pieceName) {
         this.cd.detectChanges();
-        console.log(
-          "icibg",
-          this.pieceService.win,
-          this.pieceService.player.name
-        );
-        if (!this.dialogRef) {
+        if (
+          !this.dialogRef &&
+          this.pieceService.player.name !== data?.winner &&
+          this.pieceService.player.name === data.player?.name
+        ) {
           this.dialogRef = this.dialog?.open(PopUpGameComponent, {
             data: {
-              isWin: this.pieceService.win,
+              isWin: false,
             },
             backdropClass: "backdrop",
           });
           setTimeout(() => {
             this.dialogRef.close();
+            this.dialogRef = undefined;
+          }, 10000);
+        } else if (
+          !this.dialogRef &&
+          data.piece.start === false &&
+          this.pieceService.player.name === data?.winner
+        ) {
+          this.endGame();
+          this.dialogRef = this.dialog?.open(PopUpGameComponent, {
+            data: {
+              isWin: true,
+            },
+            backdropClass: "backdrop",
+          });
+          setTimeout(() => {
+            this.dialogRef.close();
+            this.dialogRef = undefined;
           }, 10000);
         }
       }
     });
     this.socketService?.listenToServer("updatePlayer").subscribe((data) => {
       if (data?.piece?.id === this.pieceService?.pieceName) {
-        console.log(data);
         this.pieceService?.pieceList?.map((p) => {
           if (p?.id === data?.piece?.id) p = data?.piece;
         });
@@ -267,15 +284,26 @@ export class PieceComponent implements OnInit, OnDestroy {
     this.socketService
       ?.listenToServer("res send spectrum")
       .subscribe((data) => {
-        this.cd.detectChanges();
+        if (data.pieceId === this.pieceService.pieceName) {
+          this.pieceService.playersInGame.map((p) => {
+            if (p.name === data.player.name) {
+              p.game.spectrum = data.player.game.spectrum;
+              p.score = data.player.score;
+            }
+          });
+          this.cd.detectChanges();
+        }
       });
     this.socketService?.listenToServer("res change mode").subscribe((data) => {
-      this.cd.detectChanges();
+      if (data.piece.id === this.pieceService.pieceName) {
+        this.pieceService.mode = data.piece.mode;
+        this.cd.detectChanges();
+      }
     });
   }
 
   ngOnInit(): void {
-    if (this.timer) this.timer = null;
+    // if (this.timer) this.timer = null;
     this.socketService?.emitToServer("piece list", {
       id: this.socketService?.socket?.id,
     });
@@ -284,6 +312,7 @@ export class PieceComponent implements OnInit, OnDestroy {
 
   @HostListener("window:keydown", ["$event"])
   keyEvent(event: KeyboardEvent) {
+    console.log(event);
     if (event?.keyCode === 37) {
       this.pieceService.stopAll(event);
       this.pieceService.move("left");
@@ -308,8 +337,6 @@ export class PieceComponent implements OnInit, OnDestroy {
 
   timerInterval() {
     this.timer = setInterval(async () => {
-      console.log("test");
-      this.cd.detectChanges();
       this.pieceService.lock = true;
       if (this.pieceService?.start === true) {
         if (this.pieceService?.newTetro === true) {
@@ -404,9 +431,9 @@ export class PieceComponent implements OnInit, OnDestroy {
     this.pieceService.end = "END";
 
     this.socketService.emitToServer("player lose", {
-      pieceId: this.pieceService.pieceName,
-      player: this.pieceService.player,
-      id: this.socketService.socket.id,
+      pieceId: this.pieceService?.pieceName,
+      player: this.pieceService?.player,
+      id: this.socketService?.socket?.id,
     });
   }
 

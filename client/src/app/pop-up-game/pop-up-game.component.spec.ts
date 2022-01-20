@@ -27,4 +27,10 @@ describe("PopUpGameComponent", () => {
   it("should create", () => {
     expect(component).toBeTruthy();
   });
+
+  it("test when win", () => {
+    component.isWin = true;
+    component.randomGif();
+    expect(component).toBeTruthy();
+  });
 });

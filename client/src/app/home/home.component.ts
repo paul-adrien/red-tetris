@@ -42,7 +42,7 @@ import { WebsocketService } from "../services/websocketService";
         </div>
         <div
           class="primary-button"
-          (click)="createNewPiece(name.value, pieceName.value)"
+          (click)="createPiece(pieceName.value, name.value)"
         >
           Créer
         </div>
@@ -80,35 +80,7 @@ import { WebsocketService } from "../services/websocketService";
   styleUrls: ["./home.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HomeComponent implements OnInit, OnChanges {
-  public pieceList = [];
-  public pieceListtest = [
-    {
-      id: 0,
-    },
-    {
-      id: 2,
-    },
-    {
-      id: 3,
-    },
-    {
-      id: 4,
-    },
-    {
-      id: 5,
-    },
-    {
-      id: 6,
-    },
-    {
-      id: 7,
-    },
-    {
-      id: 8,
-    },
-  ];
-
+export class HomeComponent implements OnInit {
   constructor(
     private cd: ChangeDetectorRef,
     private socketService: WebsocketService,
@@ -118,79 +90,51 @@ export class HomeComponent implements OnInit, OnChanges {
     this.socketService
       .listenToServer("res check piece id")
       .subscribe((data) => {
+        this.pieceService.pieceNameError = "wrong piece name";
         this.cd.detectChanges();
       });
     this.socketService
       .listenToServer("res check player id")
       .subscribe((data) => {
-        this.cd.detectChanges();
-      });
-    this.socketService
-      .listenToServer("res check player join id")
-      .subscribe((data) => {
+        this.pieceService.playerNameError = "wrong player name";
         this.cd.detectChanges();
       });
 
-    this.socketService.listenToServer("res create piece").subscribe((data) => {
-      this.router.navigate([
-        `${hashKey}${data.piece.id}[${data.player.name}]/piece`,
-      ]);
-    });
-    this.socketService.listenToServer("res join piece").subscribe((data) => {
-      this.router.navigate([
-        `${hashKey}${data.piece.id}[${data.player.name}]/piece`,
-      ]);
-    });
     this.socketService.listenToServer("res piece list").subscribe((data) => {
+      this.pieceService.pieceList = data;
       this.cd.detectChanges();
     });
     this.socketService.listenToServer("updatePiece").subscribe((data) => {
+      this.pieceService.pieceList.push(data.piece);
       this.cd.detectChanges();
     });
-
-    this.socketService.listenToServer("res player list").subscribe((data) => {
-      console.log(data);
-    });
-    this.socketService.listenToServer("delete piece").subscribe((data) => {
-      console.log(data);
-    });
-    this.socketService
-      .listenToServer("delete player piece")
-      .subscribe((data) => {
-        console.log(data);
-        this.getPieceList();
-      });
   }
 
   ngOnInit(): void {}
 
-  ngOnChanges() {
-    console.log("changes");
-  }
-
   checkPieceId(id) {
     this.socketService.emitToServer("check piece id", {
       pieceId: id,
-      id: this.socketService.socket.id,
+      id: this.socketService?.socket?.id,
     });
   }
 
   checkPlayerId(id) {
     this.socketService.emitToServer("check player id", {
       playerId: id,
-      id: this.socketService.socket.id,
+      id: this.socketService?.socket?.id,
     });
   }
 
   getPieceList() {
     this.socketService.emitToServer("piece list", {
-      id: this.socketService.socket.id,
+      id: this.socketService?.socket?.id,
     });
   }
 
   playerList() {
     this.socketService.emitToServer("player list", {
-      id: this.socketService.socket.id,
+      id: this.socketService?.socket?.id,
     });
   }
 
@@ -198,7 +142,7 @@ export class HomeComponent implements OnInit, OnChanges {
     this.socketService.emitToServer("create piece", {
       pieceId: pieceId,
       playerName: playerName,
-      id: this.socketService.socket.id,
+      id: this.socketService?.socket?.id,
     });
   }
 
@@ -206,7 +150,7 @@ export class HomeComponent implements OnInit, OnChanges {
     this.socketService.emitToServer("join piece", {
       pieceId: pieceId,
       playerName: playerName,
-      id: this.socketService.socket.id,
+      id: this.socketService?.socket?.id,
       index: index,
     });
   }
@@ -215,13 +159,8 @@ export class HomeComponent implements OnInit, OnChanges {
     this.socketService.emitToServer("leave piece", {
       pieceId: pieceId,
       playerName: playerName,
-      id: this.socketService.socket.id,
+      id: this.socketService?.socket?.id,
     });
-  }
-
-  createNewPiece(name: string, pieceName: string) {
-    console.log(name, pieceName);
-    this.createPiece(pieceName, name);
   }
 
   getColorClass(index: number) {

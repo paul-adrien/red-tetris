@@ -18,13 +18,17 @@ exports.socketController = (io) => {
     });
 
     socket.on("socketId", () => {
+      console.log('data')
       return io.to(socket.id).emit("res socketId", socket.id);
     });
     //pieces
     socket.on("check piece id", (data) => {
+      if (data && !data.id) data.id = socket.id;
+      console.log('test: ', data)
       if (data && data.pieceId && data.id) {
         return pieceController.checkPieceId(data.pieceId).then((res) => {
           io.to(data.id).emit("res check piece id", res);
+          console.log(data, res)
         });
       }
     });
@@ -44,7 +48,7 @@ exports.socketController = (io) => {
                     piece: res3.piece,
                     player: res3.player,
                   });
-                io.to(data.id).emit("res create piece", res3);
+                io.to(data.id).emit("res create/join piece", res3);
               })
               .catch((err) => {
                 console.log(err);
@@ -66,14 +70,16 @@ exports.socketController = (io) => {
           return pieceController
             .createPiece(data)
             .then((res3) => {
-              if (res3.newPiece === true)
+              if (res3.newPiece === true){
                 io.emit("updatePiece", { piece: res3.piece });
+                console.log('test22')
+              }
               if (res3.newPlayer === true)
                 io.emit("updatePlayer", {
                   piece: res3.piece,
                   player: res3.player,
                 });
-              io.to(data.id).emit("res join piece", res3);
+              io.to(data.id).emit("res create/join piece", res3);
             })
             .catch((err) => {
               console.log(err);
@@ -131,7 +137,6 @@ exports.socketController = (io) => {
     });
 
     socket.on("player lose", async (data) => {
-      console.log("player lose", data);
       return pieceController
         .playerLose(data)
         .then((res) => {
