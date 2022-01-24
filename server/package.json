@@ -4,8 +4,11 @@
   "description": "server for red-tetris",
   "main": "server.js",
   "scripts": {
-    "test": "jasmine",
+    "test": "jest",
     "start": "node server.js"
+  },
+  "jest": {
+     "collectCoverage": true
   },
   "author": "Gguyot & Plaurent",
   "license": "ISC",
@@ -20,6 +23,6 @@
     "socket.io-client": "^4.3.2"
   },
   "devDependencies": {
-    "jasmine": "^3.8.0"
+    "jest": "^27.4.7"
   }
 }

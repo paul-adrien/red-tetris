@@ -1,6 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 import { hashKey } from "../customUrlSerializer";
+import { pieceService } from "../services/piece.service";
 import { WebsocketService } from "../services/websocketService";
 
 @Component({
@@ -9,27 +10,20 @@ import { WebsocketService } from "../services/websocketService";
   styleUrls: ["./transi.component.css"],
 })
 export class TransiComponent implements OnInit {
-  constructor(private router: Router, private socketService: WebsocketService) {
-    this.socketService?.listenToServer("res join piece").subscribe((data) => {
-      this.router?.navigate([
-        `${hashKey}${data?.piece?.id}[${data?.player?.name}]/piece`,
-      ]);
-    });
-    this.socketService
-      .listenToServer("res check player join id")
-      .subscribe((data) => {
-        this.router.navigate([`home`]);
-      });
-  }
+  constructor(
+    private router: Router,
+    private socketService: WebsocketService,
+    private pieceService: pieceService
+  ) {}
 
   ngOnInit(): void {
     const url = this.router?.url;
-    let paramRoomId = url?.split("#")[1]?.split("[")[0];
-    let paramPlayerName = url?.split("[")[1]?.split("]")[0];
-    // console.log(paramRoomId, paramPlayerName, this.socketService.socket.id);
+    let pieceId = url?.split("#")[1]?.split("[")[0];
+    let playerName = url?.split("[")[1]?.split("]")[0];
+    // console.log(pieceId, playerName, this.socketService.socket.id);
     this.socketService?.emitToServer("join piece", {
-      pieceId: paramRoomId,
-      playerName: paramPlayerName,
+      pieceId: pieceId,
+      playerName: playerName,
       id: this.socketService?.socket?.id,
     });
   }

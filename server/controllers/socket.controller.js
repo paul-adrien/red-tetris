@@ -5,7 +5,6 @@ exports.socketController = (io) => {
     console.log("a user connected");
     socket.on("disconnect", () => {
       pieceController.playerDisconnect(socket.id).then((res) => {
-        console.log(res);
         if (res.piece === undefined) {
           pieceController.pieceList().then((res) => {
             io.emit("res piece list", res);
@@ -18,13 +17,11 @@ exports.socketController = (io) => {
     });
 
     socket.on("socketId", () => {
-      console.log('data')
       return io.to(socket.id).emit("res socketId", socket.id);
     });
     //pieces
     socket.on("check piece id", (data) => {
       if (data && !data.id) data.id = socket.id;
-      console.log('test: ', data)
       if (data && data.pieceId && data.id) {
         return pieceController.checkPieceId(data.pieceId).then((res) => {
           io.to(data.id).emit("res check piece id", res);
@@ -64,6 +61,7 @@ exports.socketController = (io) => {
     });
 
     socket.on("join piece", async (data) => {
+      console.log('join')
       if (data && !data.id) data.id = socket.id;
       pieceController.checkPlayerId(data.playerName).then((res1) => {
         if (res1 === true) {
@@ -108,6 +106,7 @@ exports.socketController = (io) => {
     });
 
     socket.on("leave piece", async (data) => {
+      console.log(data)
       return pieceController
         .leavePiece(data)
         .then((res) => {

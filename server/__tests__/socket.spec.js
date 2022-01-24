@@ -1,7 +1,22 @@
 //const axios = require("axios");
 var io = require('socket.io-client');
+const http = require('http');
+const app = require('../app');
 
-var base_url = "http://localhost:8080"
+app.set('port', 3000);
+
+const server = http.createServer(app);
+const options = {
+    cors: {
+        origin: '*',
+        methods: ["GET", "POST"],
+        credentials: true,
+        allowEIO3: true
+    },
+};
+const ioServer = require('socket.io')(server, options);
+
+var base_url = "http://localhost:3000"
 
 userTest = {
     
@@ -28,7 +43,7 @@ describe("test", function () {
         }
     });
 
-    it('socketId', (done) => {
+    test('socketId', (done) => {
         socket.emit('socketId');
 
         socket.once('res socketId', (data) => {
@@ -38,7 +53,7 @@ describe("test", function () {
         });
     });
 
-    it('check piece id', (done) => {
+    test('check piece id', (done) => {
         socket.emit('check piece id', { pieceId: 'test', id: socketId});
 
         socket.once('res check piece id', (data) => {
@@ -48,7 +63,7 @@ describe("test", function () {
         });
     });
 
-    it('check player id', (done) => {
+    test('check player id', (done) => {
         socket.emit('check player id', { playerId: 'test', id: socketId});
 
         socket.once('res check player id', (data) => {
@@ -58,7 +73,7 @@ describe("test", function () {
         });
     });
 
-    it('player list', (done) => {
+    test('player list', (done) => {
         socket.emit('player list', { id: socketId});
 
         socket.once('res player list', (data) => {
@@ -67,7 +82,7 @@ describe("test", function () {
         });
     });
 
-    it('piece list', (done) => {
+    test('piece list', (done) => {
         socket.emit('piece list', { id: socketId});
 
         socket.once('res piece list', (data) => {
@@ -76,10 +91,10 @@ describe("test", function () {
         });
     });
 
-    it('create piece', (done) => {
+    test('create piece', (done) => {
         socket.emit('create piece', { pieceId: 'test', playerName: 'test', id: socketId});
 
-        socket.once('res create piece', (data) => {
+        socket.once('res create/join piece', (data) => {
             expect(data).not.toEqual([]);
             done();
         });
@@ -95,7 +110,7 @@ describe("test", function () {
         });
     });
 
-    it('player list', (done) => {
+    test('player list', (done) => {
         socket.emit('player list', { id: socketId});
 
         socket.once('res player list', (data) => {
@@ -104,7 +119,7 @@ describe("test", function () {
         });
     });
 
-    it('piece list', (done) => {
+    test('piece list', (done) => {
         socket.emit('piece list', { id: socketId});
 
         socket.once('res piece list', (data) => {
@@ -113,10 +128,10 @@ describe("test", function () {
         });
     });
 
-    it('create piece', (done) => {
+    test('create piece', (done) => {
         socket.emit('create piece', { pieceId: 'test', playerName: 'test', id: socketId});
 
-        socket.once('res create piece', (data) => {
+        socket.once('res create/join piece', (data) => {
             // console.log(data)
             // expect(data).toEqual([]);
             done();
@@ -133,16 +148,16 @@ describe("test", function () {
         });
     });
 
-    it('join piece', (done) => {
+    test('join piece', (done) => {
         socket.emit('join piece', { pieceId: 'test', playerName: 'test2', id: socketId});
 
-        socket.once('res join piece', (data) => {
+        socket.once('res create/join piece', (data) => {
             expect(data).not.toEqual([]);
             done();
         });
     });
 
-    it('leave piece', (done) => {
+    test('leave piece', (done) => {
         socket.emit('leave piece', { pieceId: 'test', playerName: 'test2', id: socketId});
 
         socket.once('res player lose', (data) => {
@@ -151,10 +166,10 @@ describe("test", function () {
         });
     });
 
-    it('join piece', (done) => {
+    test('join piece', (done) => {
         socket.emit('join piece', { pieceId: 'test', playerName: 'test2', id: socketId});
 
-        socket.once('res join piece', (data) => {
+        socket.once('res create/join piece', (data) => {
             // console.log(data)
             expect(data).not.toEqual([]);
             done();
@@ -167,7 +182,7 @@ describe("test", function () {
         });
     });
 
-    it('start piece', (done) => {
+    test('start piece', (done) => {
         socket.emit('start piece', { pieceId: 'test', playerName: 'test2', id: socketId});
 
         socket.once('res start piece', (data) => {
@@ -176,10 +191,10 @@ describe("test", function () {
         });
     });
 
-    it('join piece', (done) => {
+    test('join piece', (done) => {
         socket.emit('join piece', { pieceId: 'test', playerName: 'test2', id: socketId});
 
-        socket.once('res join piece', (data) => {
+        socket.once('res create/join piece', (data) => {
             expect(data).not.toEqual([]);
             done();
         });
@@ -191,7 +206,7 @@ describe("test", function () {
         });
     });
 
-    it('new tetrominos', (done) => {
+    test('new tetrominos', (done) => {
         socket.emit('new tetrominos', { pieceId: 'test'});
 
         socket.once('res new tetrominos', (data) => {
@@ -200,7 +215,7 @@ describe("test", function () {
         });
     });
 
-    it('send spectrum', (done) => {
+    test('send spectrum', (done) => {
         socket.emit('send spectrum', { pieceId: 'test', player: { name: 'test2', game: { spectrum: [[]]}}});
 
         socket.once('res send spectrum', (data) => {
@@ -210,7 +225,7 @@ describe("test", function () {
         });
     });
 
-    it('malus', (done) => {
+    test('malus', (done) => {
         socket.emit('malus', { pieceId: 'test', player: { name: 'test2', game: { spectrum: [[]]}}});
 
         socket.once('res malus', (data) => {
@@ -219,17 +234,8 @@ describe("test", function () {
         });
     });
 
-    it('leave piece', (done) => {
+    test('leave piece', (done) => {
         socket.emit('leave piece', { pieceId: 'test', playerName: 'test2', id: socketId});
-
-        socket.once('res player lose', (data) => {
-            expect(data).not.toEqual([]);
-            done();
-        });
-    });
-
-    it('leave piece', (done) => {
-        socket.emit('leave piece', { pieceId: 'test', playerName: 'test', id: socketId});
 
         socket.once('res player lose', (data) => {
             expect(data).not.toEqual([]);

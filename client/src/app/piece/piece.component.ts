@@ -304,6 +304,7 @@ export class PieceComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     // if (this.timer) this.timer = null;
+    console.log("PieceComponent");
     this.socketService?.emitToServer("piece list", {
       id: this.socketService?.socket?.id,
     });

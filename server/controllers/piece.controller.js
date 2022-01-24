@@ -33,7 +33,6 @@ exports.pieceList = async () => {
 
 exports.createPiece = async (piece) => {
   return new Promise((res, rej) => {
-    console.log(piece);
     if (!piece || !piece.pieceId || !piece.playerName || !piece.id)
       rej({ error: "Wrong piece format" });
     else {
@@ -160,24 +159,19 @@ exports.leavePiece = async (piece) => {
 
 async function createTetrominos(pieceIndex) {
   return new Promise((res, rej) => {
-    if (pieceIndex != -1) {
       i = 0;
       while (i < 10) {
-        if (pieceList[pieceIndex].tetroList === undefined)
-          pieceList[pieceIndex].tetroList[0] = new Tetromino();
-        else pieceList[pieceIndex].tetroList.push(new Tetromino());
+        // if (pieceList[pieceIndex].tetroList === undefined)
+        //   pieceList[pieceIndex].tetroList[0] = new Tetromino();
+        /*else*/ pieceList[pieceIndex].tetroList.push(new Tetromino());
         i++;
       }
       if (i == 10) res({ piece: pieceList[pieceIndex] });
-    } else {
-      rej({ error: "this piece doesn't exist" });
-    }
   });
 }
 
 async function getSpectrums(pieceIndex) {
   return new Promise((res, rej) => {
-    if (pieceIndex != -1) {
       i = 0;
       j = pieceList[pieceIndex].playersId.length;
       var players = [];
@@ -189,7 +183,6 @@ async function getSpectrums(pieceIndex) {
             }
           })
           .indexOf(pieceList[pieceIndex].playersId[i]);
-        console.log(playerIndex);
         if (playerIndex != -1) {
           playerList[playerIndex].game = new Game();
           playerList[playerIndex].lose = false;
@@ -200,47 +193,6 @@ async function getSpectrums(pieceIndex) {
         i++;
       }
       if (i == j) res({ players });
-    } else {
-      rej({ error: "this piece doesn't exist" });
-    }
-  });
-}
-
-async function delSpectrums(pieceIndex) {
-  return new Promise((res, rej) => {
-    if (pieceIndex != -1) {
-      i = 0;
-      j = pieceList[pieceIndex].playersId.length;
-      var players = [];
-      while (i < j) {
-        let playerIndex = playerList
-          .map((p) => {
-            if (p.delete === false) {
-              return p.name;
-            }
-          })
-          .indexOf(pieceList[pieceIndex].playersId[i]);
-        if (playerIndex != -1) {
-          if (players === undefined) {
-            for (let i = 0; i < 20; i++) {
-              playerList[playerIndex].game.spectrum[i] = [
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-              ];
-            }
-          } else {
-            for (let i = 0; i < 20; i++) {
-              playerList[playerIndex].game.spectrum[i] = [
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-              ];
-            }
-          }
-        }
-        i++;
-      }
-      if (i == j) res({ players });
-    } else {
-      rej({ error: "this piece doesn't exist" });
-    }
   });
 }
 
@@ -259,9 +211,6 @@ exports.newTetrominos = async (data) => {
           .then((piece) => {
             res({ piece: pieceList[pieceIndex] });
           })
-          .catch((err) => {
-            rej(err);
-          });
       } else {
         rej({ error: "this piece doesn't exist" });
       }
@@ -290,9 +239,6 @@ exports.startPiece = async (data) => {
               res({ piece: pieceList[pieceIndex], players: players.players });
             });
           })
-          .catch((err) => {
-            rej(err);
-          });
       } else {
         rej({ error: "this piece doesn't exist" });
       }
@@ -375,10 +321,14 @@ exports.updateSpectrum = async (data) => {
         const playerIndex = pieceList[pieceIndex].playersId.indexOf(
           data.player.name
         );
-        data.player.score = data.score;
-        playerList[playerIndex].game.spectrum = data.player.game.spectrum;
-        playerList[playerIndex].score = data.score;
-        res({ pieceId: data.pieceId, player: data.player });
+        if (playerIndex != -1){
+          data.player.score = data.score;
+          playerList[playerIndex].game.spectrum = data.player.game.spectrum;
+          playerList[playerIndex].score = data.score;
+          res({ pieceId: data.pieceId, player: data.player });
+        } else {
+          rej({ error: "this player doesn't exist" });
+        }
       } else {
         rej({ error: "this piece doesn't exist" });
       }
@@ -454,7 +404,6 @@ exports.playerDisconnect = async (socketId) => {
 
 exports.changeGameMode = async (data) => {
   return new Promise((res, rej) => {
-    console.log(data);
     if (
       data &&
       data.pieceId &&
@@ -469,7 +418,6 @@ exports.changeGameMode = async (data) => {
         .indexOf(data.pieceId);
       if (pieceIndex != -1) {
         pieceList[pieceIndex].mode = data.mode;
-        console.log("data");
         res({
           piece: pieceList[pieceIndex],
         });
@@ -489,9 +437,8 @@ exports.getHardTetro = async (data) => {
     while (++i <= data.malus) {
       tetroList = new HardTetromino();
     }
-    console.log(tetroList);
     res(tetroList);
   });
 };
 
-//module.exports = pieceList;
+//exports = pieceList;
