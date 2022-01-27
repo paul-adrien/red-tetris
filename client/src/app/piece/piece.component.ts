@@ -32,7 +32,10 @@ import { interval } from "rxjs";
         >
           Commencer la partie
         </div>
-        <div class="primary-button" (click)="this.pieceService?.leavePiece()">
+        <div
+          class="primary-button"
+          (click)="this.pieceService?.leavePiece() && endGame()"
+        >
           Quitter la partie
         </div>
       </div>
@@ -214,14 +217,12 @@ export class PieceComponent implements OnInit, OnDestroy {
   ) {
     this.socketService?.listenToServer("res start piece").subscribe((data) => {
       if (
-        this.timer === null &&
         this.pieceService?.pieceName === data?.piece?.id &&
         this.pieceService?.start !== true
       ) {
+        this.pieceService.start = true;
         this.pieceService.resStartGame(data);
         clearInterval(this.timer);
-        this.timer = null;
-        this.pieceService.start = true;
         this.timerInterval();
       }
     });
@@ -233,6 +234,9 @@ export class PieceComponent implements OnInit, OnDestroy {
           this.pieceService.player.name !== data?.winner &&
           this.pieceService.player.name === data.player?.name
         ) {
+          this.pieceService.start = false;
+          clearInterval(this.timer);
+          this.pieceService.end = "END";
           this.dialogRef = this.dialog?.open(PopUpGameComponent, {
             data: {
               isWin: false,
@@ -248,7 +252,9 @@ export class PieceComponent implements OnInit, OnDestroy {
           data.piece.start === false &&
           this.pieceService.player.name === data?.winner
         ) {
-          this.endGame();
+          this.pieceService.start = false;
+          clearInterval(this.timer);
+          this.pieceService.end = "END";
           this.dialogRef = this.dialog?.open(PopUpGameComponent, {
             data: {
               isWin: true,
@@ -303,8 +309,6 @@ export class PieceComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    // if (this.timer) this.timer = null;
-    console.log("PieceComponent");
     this.socketService?.emitToServer("piece list", {
       id: this.socketService?.socket?.id,
     });
@@ -313,7 +317,6 @@ export class PieceComponent implements OnInit, OnDestroy {
 
   @HostListener("window:keydown", ["$event"])
   keyEvent(event: KeyboardEvent) {
-    console.log(event);
     if (event?.keyCode === 37) {
       this.pieceService.stopAll(event);
       this.pieceService.move("left");
@@ -421,6 +424,8 @@ export class PieceComponent implements OnInit, OnDestroy {
           this.pieceService.move("down");
         }
         this.pieceService?.sendSpectrum();
+      } else {
+        clearInterval(this.timer);
       }
     }, 900);
   }
@@ -428,7 +433,6 @@ export class PieceComponent implements OnInit, OnDestroy {
   endGame() {
     this.pieceService.start = false;
     clearInterval(this.timer);
-    this.timer = null;
     this.pieceService.end = "END";
 
     this.socketService.emitToServer("player lose", {
@@ -441,7 +445,6 @@ export class PieceComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     clearInterval(this.timer);
     if (this.pieceService && this.pieceService?.pieceName) {
-      console.log("leave piece");
       this.pieceService.leavePiece();
     }
   }

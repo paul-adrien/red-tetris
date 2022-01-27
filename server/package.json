@@ -8,7 +8,7 @@
     "start": "node server.js"
   },
   "jest": {
-     "collectCoverage": true
+    "collectCoverage": true
   },
   "author": "Gguyot & Plaurent",
   "license": "ISC",

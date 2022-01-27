@@ -105,8 +105,15 @@ export class HomeComponent implements OnInit {
       this.cd.detectChanges();
     });
     this.socketService.listenToServer("updatePiece").subscribe((data) => {
-      this.pieceService.pieceList.push(data.piece);
-      this.cd.detectChanges();
+      let pieceIndex = this.pieceService?.pieceList
+        .map((p) => {
+          return p.id;
+        })
+        .indexOf(data?.piece?.id);
+      if (pieceIndex == -1) {
+        this.pieceService?.pieceList.push(data?.piece);
+        this.cd.detectChanges();
+      }
     });
   }
 
