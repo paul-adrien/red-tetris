@@ -83,7 +83,6 @@ export class pieceService implements OnDestroy {
     });
 
     this.socketService.listenToServer("res malus").subscribe((data) => {
-      console.log(data);
       if (
         data.pieceId === this.pieceName &&
         this.player.name !== data.playerName
@@ -91,7 +90,6 @@ export class pieceService implements OnDestroy {
         if (this.mode == 2) {
           this.malus += data.nbMalus - 1;
           let malId = Math.floor(Math.random() * 3);
-          console.log(malId);
           if (malId == 0) {
             this.malusRotate += 7 * this.malus;
           } else if (malId == 1) {
@@ -123,7 +121,6 @@ export class pieceService implements OnDestroy {
     this.socketService
       .listenToServer("res malus hardcore")
       .subscribe((data) => {
-        console.log(data);
         this.tetroList.splice(this.currentTetro + 1, 0, data);
       });
   }
@@ -415,6 +412,7 @@ export class pieceService implements OnDestroy {
       mode: mode,
       id: this.socketService?.socket?.id,
     });
+    return mode;
   }
 
   async leavePiece() {

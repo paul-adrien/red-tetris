@@ -43,7 +43,7 @@ describe("HomeComponent", () => {
     expect(service).toBeTruthy();
   });
 
-  it("test", () => {
+  it("create/join piece", () => {
     socket.emit("join piece", {
       pieceId: "test_pieceId",
       playerName: "test_playerName",
@@ -62,12 +62,12 @@ describe("HomeComponent", () => {
 
   it("test get color class", () => {
     var light_blue = component.getColorClass(0);
-    var blue = component.getColorClass(1);
-    var green = component.getColorClass(2);
-    var yellow = component.getColorClass(3);
-    var red = component.getColorClass(4);
-    var orange = component.getColorClass(5);
-    var purple = component.getColorClass(6);
+    component.getColorClass(1);
+    component.getColorClass(2);
+    component.getColorClass(3);
+    component.getColorClass(4);
+    component.getColorClass(5);
+    component.getColorClass(6);
     expect(light_blue).toEqual("light-blue");
   });
 

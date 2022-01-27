@@ -23,7 +23,7 @@ describe("pieceService", () => {
     expect(parse).not.toEqual(null);
   });
 
-  it("test parse 2", () => {
+  it("test false parse", () => {
     const parse = provider.parse("room[test]");
     expect(parse).not.toEqual(null);
   });

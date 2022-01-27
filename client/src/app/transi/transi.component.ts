@@ -20,7 +20,6 @@ export class TransiComponent implements OnInit {
     const url = this.router?.url;
     let pieceId = url?.split("#")[1]?.split("[")[0];
     let playerName = url?.split("[")[1]?.split("]")[0];
-    // console.log(pieceId, playerName, this.socketService.socket.id);
     this.socketService?.emitToServer("join piece", {
       pieceId: pieceId,
       playerName: playerName,

@@ -25,12 +25,12 @@ exports.socketController = (io) => {
       if (data && data.pieceId && data.id) {
         return pieceController.checkPieceId(data.pieceId).then((res) => {
           io.to(data.id).emit("res check piece id", res);
-          console.log(data, res)
         });
       }
     });
 
     socket.on("create piece", async (data) => {
+      console.log(data)
       if (data && !data.id) data.id = socket.id;
       pieceController.checkPieceId(data.pieceId).then((res1) => {
         pieceController.checkPlayerId(data.playerName).then((res2) => {
@@ -48,10 +48,8 @@ exports.socketController = (io) => {
                 io.to(data.id).emit("res create/join piece", res3);
               })
               .catch((err) => {
-                console.log(err);
               });
           } else {
-            console.log(res2, res1);
             if (res2 === false)
               io.to(data.id).emit("res check player id", res2);
             if (res1 === false) io.to(data.id).emit("res check piece id", res1);
@@ -61,7 +59,7 @@ exports.socketController = (io) => {
     });
 
     socket.on("join piece", async (data) => {
-      console.log('join')
+      console.log(data)
       if (data && !data.id) data.id = socket.id;
       pieceController.checkPlayerId(data.playerName).then((res1) => {
         if (res1 === true) {
@@ -70,7 +68,6 @@ exports.socketController = (io) => {
             .then((res3) => {
               if (res3.newPiece === true){
                 io.emit("updatePiece", { piece: res3.piece });
-                console.log('test22')
               }
               if (res3.newPlayer === true)
                 io.emit("updatePlayer", {
@@ -80,10 +77,8 @@ exports.socketController = (io) => {
               io.to(data.id).emit("res create/join piece", res3);
             })
             .catch((err) => {
-              console.log(err);
             });
         } else {
-          console.log(res1);
           if (res1 === false)
             io.to(data.id).emit("res check player join id", {
               status: res1,
@@ -97,16 +92,13 @@ exports.socketController = (io) => {
       return pieceController
         .pieceList()
         .then((res) => {
-          console.log("piece list");
           io.to(data.id).emit("res piece list", res);
         })
         .catch((err) => {
-          console.log(err);
         });
     });
 
     socket.on("leave piece", async (data) => {
-      console.log(data)
       return pieceController
         .leavePiece(data)
         .then((res) => {
@@ -119,19 +111,16 @@ exports.socketController = (io) => {
           }
         })
         .catch((err) => {
-          console.log(err);
         });
     });
 
     socket.on("start piece", async (data) => {
-      console.log("start piece");
       return pieceController
         .startPiece(data)
         .then((res) => {
           io.emit("res start piece", res);
         })
         .catch((err) => {
-          console.log(err);
         });
     });
 
@@ -142,7 +131,6 @@ exports.socketController = (io) => {
           io.emit("res player lose", res);
         })
         .catch((err) => {
-          console.log(err);
         });
     });
 
@@ -153,7 +141,6 @@ exports.socketController = (io) => {
           io.emit("res new tetrominos", res);
         })
         .catch((err) => {
-          console.log(err);
         });
     });
 
@@ -164,12 +151,10 @@ exports.socketController = (io) => {
           io.emit("res send spectrum", res);
         })
         .catch((err) => {
-          console.log(err);
         });
     });
 
     socket.on("malus", async (data) => {
-      console.log("malus");
       io.emit("res malus", data);
     });
 
@@ -180,7 +165,6 @@ exports.socketController = (io) => {
           if (res != null) io.to(data.id).emit("res malus hardcore", res);
         })
         .catch((err) => {
-          console.log(err);
         });
     });
 
@@ -191,7 +175,6 @@ exports.socketController = (io) => {
           if (res != null) io.emit("res change mode", res);
         })
         .catch((err) => {
-          console.log(err);
         });
     });
 
@@ -211,7 +194,6 @@ exports.socketController = (io) => {
           io.to(data.id).emit("res player list", res);
         })
         .catch((err) => {
-          console.log(err);
         });
     });
   });

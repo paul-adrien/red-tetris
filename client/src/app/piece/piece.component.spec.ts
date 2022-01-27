@@ -256,7 +256,7 @@ describe("PieceComponent", () => {
     expect(service).toBeTruthy();
   });
 
-  it("test", () => {
+  it("normal game", () => {
     service2.start = true;
     service2.pieceName = "test";
     service2.player = {
@@ -298,7 +298,7 @@ describe("PieceComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("test2", () => {
+  it("restart game", () => {
     service2.start = true;
     service2.pieceName = "test";
     service2.player = {
@@ -307,6 +307,7 @@ describe("PieceComponent", () => {
         spectrum: spectrumFull,
       },
     };
+    data.piece.tetroList[0].position.y = 17;
     service2.resStartGame(data);
     service2.startGame();
     component.timerInterval();

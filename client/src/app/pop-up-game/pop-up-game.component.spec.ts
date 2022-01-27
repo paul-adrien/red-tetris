@@ -13,7 +13,7 @@ describe("PopUpGameComponent", () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [PopUpGameComponent],
-      providers: [{ provide: MAT_DIALOG_DATA, useValue: {} }],
+      providers: [{ provide: MAT_DIALOG_DATA, useValue: { isWin: true } }],
       imports: [MatDialogModule],
     }).compileComponents();
   }));
@@ -29,8 +29,13 @@ describe("PopUpGameComponent", () => {
   });
 
   it("test when win", () => {
-    component.isWin = true;
-    component.randomGif();
-    expect(component).toBeTruthy();
+    let url = component.randomGif();
+    expect(url).toBeTruthy("./assets/win" + component.number + ".gif");
+  });
+
+  it("test when lose", () => {
+    component.isWin = false;
+    let url = component.randomGif();
+    expect(url).toBeTruthy("./assets/lose" + component.number + ".gif");
   });
 });

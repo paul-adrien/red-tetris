@@ -33,10 +33,18 @@ describe("pieceService", () => {
     expect(service).toBeTruthy();
   });
 
-  it("should be created", () => {
+  it("init piece", () => {
     service.initPiece(data);
-    service.changeGameMode(2);
-    service.colors(0);
+    expect(service.pieceName).toEqual("test");
+  });
+
+  it("change game mode", () => {
+    let mode = service.changeGameMode(2);
+    expect(mode).toEqual(2);
+  });
+
+  it("test color", () => {
+    let test = service.colors(0);
     service.colors(1);
     service.colors(2);
     service.colors(3);
@@ -45,6 +53,6 @@ describe("pieceService", () => {
     service.colors(6);
     service.colors(7);
     service.colors(404);
-    expect(service).toBeTruthy();
+    expect(test).toEqual("background: white");
   });
 });

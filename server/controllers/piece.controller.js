@@ -140,18 +140,19 @@ exports.leavePiece = async (piece) => {
           res({
             piece: pieceList[pieceIndex],
             player: playerList[playerIndex],
+            winner: pieceList[pieceIndex].playersId[0]
           });
         } else {
           res({
             piece: pieceList[pieceIndex],
-            player: playerList[playerIndex],
+            player: playerList[playerIndex]
           });
         }
       } else {
         //solo
         pieceList.splice(pieceIndex, 1);
         playerList[playerIndex].delete = true;
-        res({ piece: pieceList[pieceIndex], player: playerList[playerIndex] });
+        res({ piece: pieceList[pieceIndex], player: playerList[playerIndex], winner: '' });
       }
     }
   });
@@ -256,18 +257,18 @@ exports.playerLose = async (data) => {
           return p.id;
         })
         .indexOf(data.pieceId);
+      const playerIndex = playerList
+        .map((p) => {
+          if (p.delete === false) {
+            return p.name;
+          }
+        })
+        .indexOf(data.player.name);
       if (pieceIndex != -1) {
         l = pieceList[pieceIndex].playersId.length
         if (l > 1) {
           //multi
           pieceList[pieceIndex].nbPlayersInGame--;
-          const playerIndex = playerList
-            .map((p) => {
-              if (p.delete === false) {
-                return p.name;
-              }
-            })
-            .indexOf(data.player.name);
           playerList[playerIndex].lose = true;
           playerList[playerIndex].win = false;
           if (pieceList[pieceIndex].nbPlayersInGame < 2) {
@@ -289,6 +290,7 @@ exports.playerLose = async (data) => {
             res({
               piece: pieceList[pieceIndex],
               player: playerList[playerIndex],
+              winner: ''
             });
           }
         } else {
@@ -298,6 +300,7 @@ exports.playerLose = async (data) => {
           res({
             piece: pieceList[pieceIndex],
             player: playerList[playerIndex],
+            winner: ''
           });
         }
       } else {
@@ -368,6 +371,7 @@ exports.playerDisconnect = async (socketId) => {
       })
       .indexOf(socketId);
     if (playerIndex != -1 && playerList[playerIndex].delete === false) {
+      var winner = '';
       var pName = playerList[playerIndex].name;
       playerList.splice(playerIndex, 1)
       index = pieceList.map((p, index) => {
@@ -380,6 +384,12 @@ exports.playerDisconnect = async (socketId) => {
               if (p.nbPlayersInGame == 1) {
                 p.nbPlayersInGame = 0;
                 p.start = false;
+                for (let i = 0; i < l; i++) {
+                  let pId = playerList.map((p) => {return p.name}).indexOf(pieceList[pieceIndex].playersId[i])
+                  if (pId != -1 && playerList[pId]?.lose !== true){
+                    winner = playerList[pId].name;
+                  }
+                }
               }
             }
             if (
@@ -397,6 +407,7 @@ exports.playerDisconnect = async (socketId) => {
       res({
         piece: pieceList[index],
         player: playerList[playerIndex],
+        winner: winner
       });
     }
   });

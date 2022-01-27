@@ -57,7 +57,6 @@ describe("test", function () {
         socket.emit('check piece id', { pieceId: 'test', id: socketId});
 
         socket.once('res check piece id', (data) => {
-            // console.log(data)
             expect(data).toEqual(true);
             done();
         });
@@ -67,7 +66,6 @@ describe("test", function () {
         socket.emit('check player id', { playerId: 'test', id: socketId});
 
         socket.once('res check player id', (data) => {
-            // console.log(data)
             expect(data).toEqual(true);
             done();
         });
@@ -101,12 +99,10 @@ describe("test", function () {
 
         socket.once('res check piece id', (data) => {
             expect(data).toEqual(false);
-            done();
         });
 
         socket.once('res check player id', (data) => {
             expect(data).toEqual(false);
-            done();
         });
     });
 
@@ -128,41 +124,35 @@ describe("test", function () {
         });
     });
 
-    test('create piece', (done) => {
+    test('create piece', () => {
         socket.emit('create piece', { pieceId: 'test', playerName: 'test', id: socketId});
 
         socket.once('res create/join piece', (data) => {
-            // console.log(data)
-            // expect(data).toEqual([]);
-            done();
+            expect(data).not.toEqual([]);
         });
 
         socket.once('res check piece id', (data) => {
             expect(data).toEqual(false);
-            done();
         });
 
         socket.once('res check player id', (data) => {
             expect(data).toEqual(false);
-            done();
         });
     });
 
-    test('join piece', (done) => {
+    test('join piece', () => {
         socket.emit('join piece', { pieceId: 'test', playerName: 'test2', id: socketId});
 
         socket.once('res create/join piece', (data) => {
             expect(data).not.toEqual([]);
-            done();
         });
     });
 
-    test('leave piece', (done) => {
+    test('leave piece', () => {
         socket.emit('leave piece', { pieceId: 'test', playerName: 'test2', id: socketId});
 
         socket.once('res player lose', (data) => {
             expect(data).not.toEqual([]);
-            done();
         });
     });
 
@@ -191,18 +181,15 @@ describe("test", function () {
         });
     });
 
-    test('join piece', (done) => {
+    test('join piece', () => {
         socket.emit('join piece', { pieceId: 'test', playerName: 'test2', id: socketId});
 
         socket.once('res create/join piece', (data) => {
             expect(data).not.toEqual([]);
-            done();
         });
 
         socket.once('res check player join id', (data) => {
-            // console.log(data)
             expect(data).toEqual({ status: false });
-            done();
         });
     });
 
@@ -234,12 +221,11 @@ describe("test", function () {
         });
     });
 
-    test('leave piece', (done) => {
+    test('leave piece', () => {
         socket.emit('leave piece', { pieceId: 'test', playerName: 'test2', id: socketId});
 
         socket.once('res player lose', (data) => {
             expect(data).not.toEqual([]);
-            done();
         });
     });
 })
