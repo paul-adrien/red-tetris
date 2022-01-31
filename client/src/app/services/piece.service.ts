@@ -29,7 +29,7 @@ export class pieceService implements OnDestroy {
   public malusAcc = 0;
   public lock = false;
   public score = 0;
-  public mode = 0;
+  public mode = 1;
   public win = null;
 
   public end = "";
