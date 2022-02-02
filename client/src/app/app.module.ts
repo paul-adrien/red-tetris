@@ -36,6 +36,7 @@ import { PopUpGameComponent } from "./pop-up-game/pop-up-game.component";
 
   providers: [
     WebsocketService,
+
     { provide: UrlSerializer, useClass: CustomUrlSerializer },
   ],
   bootstrap: [AppComponent],

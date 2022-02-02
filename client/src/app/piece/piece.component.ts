@@ -57,7 +57,7 @@ import { interval } from "rxjs";
               this.pieceService?.start === true && this.pieceService?.mode === 0
             "
           >
-            <p>Next:</p>
+            <p>Prochaine:</p>
             <div class="next-container">
               <div
                 class="tetriRow"
@@ -73,8 +73,14 @@ import { interval } from "rxjs";
               </div>
             </div>
           </div>
-          <p>Créateur: {{ this.pieceService?.pieceCreator }}</p>
-          <div class="" *ngIf="this.pieceService?.start === false">
+          <div class="info-text">
+            Player:
+            {{ this.pieceService?.player?.name }}
+          </div>
+          <div class="info-text">
+            Créateur: {{ this.pieceService.pieceCreator }}
+          </div>
+          <div class="info-text" *ngIf="this.pieceService.start === false">
             <div class="modeItem">Choix du mode de jeu:</div>
             <label class="modeItem">
               <input
@@ -133,13 +139,10 @@ import { interval } from "rxjs";
               <span>Hardcore</span>
             </label>
           </div>
-          <p>
-            Player:
-            {{ this.pieceService?.player?.name }}
-          </p>
-          <div>Score: {{ pieceService?.score }}</div>
-          <div *ngIf="this.pieceService?.start" class="other-container">
-            <div *ngFor="let player of pieceService?.playersInGame">
+
+          <div>Score: {{ pieceService.score }}</div>
+          <div *ngIf="this.pieceService.start" class="other-container">
+            <div *ngFor="let player of pieceService.playersInGame">
               <div
                 class="text"
                 *ngIf="player?.name !== this.pieceService?.player?.name"
@@ -179,7 +182,7 @@ import { interval } from "rxjs";
                 class="text"
                 *ngIf="player !== this.pieceService?.player?.name"
               >
-                Score: 0
+                Score: {{ player?.score || 0 }}
               </div>
               <div
                 class="board"

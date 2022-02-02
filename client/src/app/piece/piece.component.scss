@@ -44,10 +44,9 @@
   }
 
   .next-container {
-    display: flex;
     background: white;
-    width: 36px;
-    height: 36px;
+    width: 48px;
+    height: 48px;
   }
 
   .player-container {
@@ -58,6 +57,19 @@
     padding: 0 1rem;
     border: 2px solid black;
     min-width: 18rem;
+    position: relative;
+    padding-top: 1rem;
+
+    .info-text {
+      margin-bottom: 1rem;
+    }
+
+    input[type="radio"]:disabled,
+    input:disabled {
+      border-color: red;
+      color: red;
+      background: red;
+    }
   }
 
   .colonne {
