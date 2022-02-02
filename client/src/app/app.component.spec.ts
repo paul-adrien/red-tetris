@@ -27,6 +27,7 @@ describe("AppComponent", () => {
   it(`should have as title 'red-tetris'`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
+    app.playPause();
     expect(app.title).toEqual("red-tetris");
   });
 });

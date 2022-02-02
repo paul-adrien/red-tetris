@@ -294,6 +294,7 @@ describe("PieceComponent", () => {
     component.keyEvent(right);
     component.keyEvent(down);
     component.keyEvent(downMax);
+    jasmine.clock().tick(10001);
     component.endGame();
     expect(component).toBeTruthy();
   });
