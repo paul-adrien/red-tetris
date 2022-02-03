@@ -30,7 +30,6 @@ exports.socketController = (io) => {
     });
 
     socket.on("create piece", async (data) => {
-      console.log(data)
       if (data && !data.id) data.id = socket.id;
       pieceController.checkPieceId(data.pieceId).then((res1) => {
         pieceController.checkPlayerId(data.playerName).then((res2) => {
@@ -47,8 +46,7 @@ exports.socketController = (io) => {
                   });
                 io.to(data.id).emit("res create/join piece", res3);
               })
-              .catch((err) => {
-              });
+              .catch((err) => {});
           } else {
             if (res2 === false)
               io.to(data.id).emit("res check player id", res2);
@@ -59,14 +57,13 @@ exports.socketController = (io) => {
     });
 
     socket.on("join piece", async (data) => {
-      console.log(data)
       if (data && !data.id) data.id = socket.id;
       pieceController.checkPlayerId(data.playerName).then((res1) => {
         if (res1 === true) {
           return pieceController
             .createPiece(data)
             .then((res3) => {
-              if (res3.newPiece === true){
+              if (res3.newPiece === true) {
                 io.emit("updatePiece", { piece: res3.piece });
               }
               if (res3.newPlayer === true)
@@ -76,8 +73,7 @@ exports.socketController = (io) => {
                 });
               io.to(data.id).emit("res create/join piece", res3);
             })
-            .catch((err) => {
-            });
+            .catch((err) => {});
         } else {
           if (res1 === false)
             io.to(data.id).emit("res check player join id", {
@@ -94,8 +90,7 @@ exports.socketController = (io) => {
         .then((res) => {
           io.to(data.id).emit("res piece list", res);
         })
-        .catch((err) => {
-        });
+        .catch((err) => {});
     });
 
     socket.on("leave piece", async (data) => {
@@ -110,8 +105,7 @@ exports.socketController = (io) => {
             io.emit("res player lose", res);
           }
         })
-        .catch((err) => {
-        });
+        .catch((err) => {});
     });
 
     socket.on("start piece", async (data) => {
@@ -120,8 +114,7 @@ exports.socketController = (io) => {
         .then((res) => {
           io.emit("res start piece", res);
         })
-        .catch((err) => {
-        });
+        .catch((err) => {});
     });
 
     socket.on("player lose", async (data) => {
@@ -130,8 +123,7 @@ exports.socketController = (io) => {
         .then((res) => {
           io.emit("res player lose", res);
         })
-        .catch((err) => {
-        });
+        .catch((err) => {});
     });
 
     socket.on("new tetrominos", async (data) => {
@@ -140,8 +132,7 @@ exports.socketController = (io) => {
         .then((res) => {
           io.emit("res new tetrominos", res);
         })
-        .catch((err) => {
-        });
+        .catch((err) => {});
     });
 
     socket.on("send spectrum", async (data) => {
@@ -150,8 +141,7 @@ exports.socketController = (io) => {
         .then((res) => {
           io.emit("res send spectrum", res);
         })
-        .catch((err) => {
-        });
+        .catch((err) => {});
     });
 
     socket.on("malus", async (data) => {
@@ -164,8 +154,7 @@ exports.socketController = (io) => {
         .then((res) => {
           if (res != null) io.to(data.id).emit("res malus hardcore", res);
         })
-        .catch((err) => {
-        });
+        .catch((err) => {});
     });
 
     socket.on("change mode", async (data) => {
@@ -174,8 +163,7 @@ exports.socketController = (io) => {
         .then((res) => {
           if (res != null) io.emit("res change mode", res);
         })
-        .catch((err) => {
-        });
+        .catch((err) => {});
     });
 
     //players
@@ -193,8 +181,7 @@ exports.socketController = (io) => {
         .then((res) => {
           io.to(data.id).emit("res player list", res);
         })
-        .catch((err) => {
-        });
+        .catch((err) => {});
     });
   });
 };

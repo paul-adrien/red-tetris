@@ -267,6 +267,7 @@ describe("PieceComponent", () => {
     };
     service2.resStartGame(data);
     component.playPause();
+    component.loop();
     component.timerInterval();
     service2.malus = 4;
     service2.lineClear(spectrum0);

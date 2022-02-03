@@ -238,14 +238,7 @@ export class PieceComponent implements OnInit, OnDestroy {
     this.audioBack.src = "assets/tetris-music.mp3";
     this.audioBack.load();
     this.audioBack.loop = true;
-    this.audioBack.addEventListener(
-      "ended",
-      function () {
-        this.currentTime = 0;
-        this.play();
-      },
-      false
-    );
+    this.audioBack.addEventListener("ended", this.loop, false);
     this.audioBack.addEventListener(
       "canplaythrough",
       () => {
@@ -499,10 +492,15 @@ export class PieceComponent implements OnInit, OnDestroy {
   }
 
   public playPause() {
-    console.log(this.audioBack.muted);
     this.audioBack.muted = !this.audioBack.muted;
     this.audioLose.muted = !this.audioLose.muted;
     this.audioWin.muted = !this.audioWin.muted;
+    this.cd.detectChanges();
+  }
+
+  public loop() {
+    this.audioBack.currentTime = 0;
+    this.audioBack.play();
     this.cd.detectChanges();
   }
 
