@@ -266,6 +266,7 @@ describe("PieceComponent", () => {
       },
     };
     service2.resStartGame(data);
+    component.playPause();
     component.timerInterval();
     service2.malus = 4;
     service2.lineClear(spectrum0);
@@ -296,6 +297,7 @@ describe("PieceComponent", () => {
     component.keyEvent(downMax);
     jasmine.clock().tick(10001);
     component.endGame();
+
     expect(component).toBeTruthy();
   });
 

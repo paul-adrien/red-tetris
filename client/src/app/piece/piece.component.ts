@@ -17,7 +17,16 @@ import { interval } from "rxjs";
 @Component({
   selector: "app-piece",
   template: `
-    <div class="container">
+    <div *ngIf="this.isLoad" class="container">
+      <img
+        class="volume"
+        (click)="this.playPause()"
+        [src]="
+          this.audioBack.muted
+            ? 'assets/volume-mute-sharp.svg'
+            : 'assets/volume-medium-sharp.svg'
+        "
+      />
       <div class="title">{{ this.pieceService?.pieceName }}</div>
 
       <div class="buttons">
@@ -209,6 +218,11 @@ import { interval } from "rxjs";
 export class PieceComponent implements OnInit, OnDestroy {
   public timer = null;
   public dialogRef;
+  public audioBack;
+  public audioWin;
+  public audioLose;
+
+  public isLoad = false;
 
   constructor(
     private routes: ActivatedRoute,
@@ -218,6 +232,32 @@ export class PieceComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private cd: ChangeDetectorRef
   ) {
+    this.audioBack = new Audio();
+    this.audioLose = new Audio();
+    this.audioWin = new Audio();
+    this.audioBack.src = "assets/tetris-music.mp3";
+    this.audioBack.load();
+    this.audioBack.loop = true;
+    this.audioBack.addEventListener(
+      "ended",
+      function () {
+        this.currentTime = 0;
+        this.play();
+      },
+      false
+    );
+    this.audioBack.addEventListener(
+      "canplaythrough",
+      () => {
+        this.isLoad = true;
+        this.cd.detectChanges();
+      },
+      false
+    );
+    this.audioWin.src = "assets/victory.mp3";
+    this.audioLose.src = "assets/lose.mp3";
+    this.audioWin.load();
+    this.audioLose.load();
     this.socketService?.listenToServer("res start piece").subscribe((data) => {
       if (
         this.pieceService?.pieceName === data?.piece?.id &&
@@ -225,6 +265,9 @@ export class PieceComponent implements OnInit, OnDestroy {
       ) {
         this.pieceService.start = true;
         this.pieceService.resStartGame(data);
+
+        this.audioBack.play();
+
         clearInterval(this.timer);
         this.timerInterval();
       }
@@ -246,7 +289,12 @@ export class PieceComponent implements OnInit, OnDestroy {
             },
             backdropClass: "backdrop",
           });
+          this.audioBack.pause();
+          this.audioBack.currentTime = 0;
+          this.audioLose.play();
           setTimeout(() => {
+            this.audioLose.pause();
+            this.audioLose.currentTime = 0;
             this.dialogRef.close();
             this.dialogRef = undefined;
           }, 10000);
@@ -264,7 +312,12 @@ export class PieceComponent implements OnInit, OnDestroy {
             },
             backdropClass: "backdrop",
           });
+          this.audioBack.pause();
+          this.audioBack.currentTime = 0;
+          this.audioWin.play();
           setTimeout(() => {
+            this.audioWin.pause();
+            this.audioWin.currentTime = 0;
             this.dialogRef.close();
             this.dialogRef = undefined;
           }, 10000);
@@ -445,8 +498,22 @@ export class PieceComponent implements OnInit, OnDestroy {
     });
   }
 
+  public playPause() {
+    console.log(this.audioBack.muted);
+    this.audioBack.muted = !this.audioBack.muted;
+    this.audioLose.muted = !this.audioLose.muted;
+    this.audioWin.muted = !this.audioWin.muted;
+    this.cd.detectChanges();
+  }
+
   ngOnDestroy() {
     clearInterval(this.timer);
+    this.audioBack.pause();
+    this.audioBack.currentTime = 0;
+    this.audioLose.pause();
+    this.audioLose.currentTime = 0;
+    this.audioWin.pause();
+    this.audioWin.currentTime = 0;
     if (this.pieceService && this.pieceService?.pieceName) {
       this.pieceService.leavePiece();
     }

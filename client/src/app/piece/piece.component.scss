@@ -5,6 +5,15 @@
   background: repeat url("../../assets/background.jpg");
   color: black;
 
+  .volume {
+    position: absolute;
+    height: 3rem;
+    object-fit: contain;
+    top: 1rem;
+    right: 1rem;
+    cursor: pointer;
+  }
+
   .container {
     display: flex;
     flex-direction: column;
